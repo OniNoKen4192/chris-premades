@@ -186,7 +186,7 @@ async function damageEmpowered({trigger: {entity: item}, workflow}) {
             await newRoll.toMessage({
                 speaker: ChatMessage.implementation.getSpeaker({token: workflow.token}),
                 flavor: genericUtils.format('CHRISPREMADES.Generic.Rerolling', {origDie: 'd' + existingRoll.faces, origResult: existingRoll.results[currInd]}),
-                rollMode: game.settings.get('core', 'rollMode')
+                rollMode: genericUtils.getCoreRollMode()
             });
             newDamageRolls[roll].terms[term].results[currInd].result = newRoll.total;
         }
