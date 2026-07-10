@@ -109,10 +109,13 @@
         "compatibility": {
           "minimum": "13.0.17"
         }
-      },
+      }
+    ],
+    "recommends": [
       {
         "id": "times-up",
         "type": "module",
+        "reason": "Required on Foundry V13 for time-based effect expiry. Not needed on V14: core provides this functionality and times-up has no V14 release.",
         "compatibility": {
           "minimum": "13.1.2"
         }
