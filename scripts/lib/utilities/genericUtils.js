@@ -28,6 +28,12 @@ function mergeObject(original, other, options={}) {
     return foundry.utils.mergeObject(original, other, options);
 }
 async function update(entity, updates = {}, options = {}, forceGM = false) {
+    // V14 moved ActiveEffect#changes to system.changes; rewrite legacy update payloads
+    if (game.release.generation > 13 && entity instanceof ActiveEffect && updates?.changes) {
+        updates = foundry.utils.deepClone(updates);
+        foundry.utils.setProperty(updates, 'system.changes', updates.changes);
+        delete updates.changes;
+    }
     let hasPermission = false;
     if (!forceGM) hasPermission = socketUtils.hasPermission(entity.documentName === 'Activity' ? entity.item : entity, game.user.id);
     if (hasPermission) return await entity.update(updates, options);
@@ -99,6 +105,10 @@ function notify(message, type = 'info', {localize = true, permanent = false} = {
     ui.notifications[type](message, {localize: localize, permanent: permanent});
 }
 async function createEmbeddedDocuments(entity, type, updates, options) {
+    // Resolve mixed legacy/system change data on V14 (see effectUtils.normalizeChanges)
+    if (type === 'ActiveEffect') updates?.forEach(i => {
+        if (i?.changes && foundry.utils.getProperty(i, 'system.changes')) delete i.system.changes;
+    });
     let hasPermission = socketUtils.hasPermission(entity, game.user.id);
     let documents;
     if (hasPermission) {
@@ -106,6 +116,10 @@ async function createEmbeddedDocuments(entity, type, updates, options) {
     } else {
         let documentUuids = await socket.executeAsGM(sockets.createEmbeddedDocuments.name, entity.uuid, type, updates, options);
         documents = await Promise.all(documentUuids.map(async i => await fromUuid(i)));
+    }
+    // V14: the compat layer creates a template-backed Region; normalize to the RegionDocument
+    if (type === 'MeasuredTemplate' && game.release.generation > 13) {
+        documents = documents.map(i => (i ? entity.regions?.get(i.id) : undefined) ?? i);
     }
     return documents;
 }
@@ -121,6 +135,8 @@ async function updateEmbeddedDocuments(entity, type, updates, options) {
     return documents;
 }
 async function deleteEmbeddedDocuments(entity, type, ids, options) {
+    // V14: templates are Region-backed and share their ids with the backing Region
+    if (type === 'MeasuredTemplate' && game.release.generation > 13) type = 'Region';
     let hasPermission = socketUtils.hasPermission(entity, game.user.id);
     let documents;
     if (hasPermission) {
@@ -181,6 +197,10 @@ function getCPRIdentifiers(name, rules = 'legacy') {
     let identifiers = Object.entries(macros).filter(i => i[1].name === name || i[1].aliases?.includes(name)).map(i => i[0]);
     return identifiers;
 }
+function getCoreRollMode() {
+    // V14 renamed the core rollMode setting to messageMode (values: public/gm/blind/self)
+    return game.settings.get('core', game.release.generation > 13 ? 'messageMode' : 'rollMode');
+}
 function convertDistance(ft) {
     if (!canvas.scene) return ft;
     if (canvas.scene.grid.units !== 'm') return ft;
@@ -220,5 +240,6 @@ export let genericUtils = {
     getRules,
     getCPRIdentifier,
     convertDistance,
-    getCPRIdentifiers
+    getCPRIdentifiers,
+    getCoreRollMode
 };

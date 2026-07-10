@@ -13,7 +13,7 @@ async function use({trigger, workflow}) {
     if (!sourceEffect) return;
     let effectData = genericUtils.duplicate(sourceEffect.toObject());
     effectData.duration = itemUtils.convertDuration(workflow.activity);
-    effectData.changes[0].value = roll.roll.total;
+    effectUtils.getChanges(effectData)[0].value = roll.roll.total;
     await Promise.all(workflow.targets.map(async token => await effectUtils.createEffect(token.actor, effectData)));
 }
 async function added({trigger: {entity: item}}) {

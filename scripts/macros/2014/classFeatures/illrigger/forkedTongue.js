@@ -6,7 +6,7 @@ async function use({trigger, workflow}) {
     let effect = effectUtils.getEffectByIdentifier(workflow.actor, 'forkedTongueEffect');
     let previousLanguages = [];
     if (effect) {
-        previousLanguages = effect.changes.filter(change => change.key === 'system.traits.languages.value').map(change => change.value);
+        previousLanguages = effectUtils.getChanges(effect).filter(change => change.key === 'system.traits.languages.value').map(change => change.value);
     }
     let knownLanguages = Array.from(workflow.actor.system.traits.languages.value).filter(i => !previousLanguages.includes(i));
     let selection = await DialogApp.dialog(workflow.item.name, 'CHRISPREMADES.Macros.ForkedTongue.SelectLanguages', [

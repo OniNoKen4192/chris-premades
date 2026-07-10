@@ -1,6 +1,6 @@
 import {Summons} from '../../../lib/summons.js';
 import {Teleport} from '../../../lib/teleport.js';
-import {activityUtils, actorUtils, compendiumUtils, constants, dialogUtils, effectUtils, errors, genericUtils, itemUtils, tokenUtils, workflowUtils} from '../../../utils.js';
+import {activityUtils, actorUtils, compendiumUtils, constants, dialogUtils, effectUtils, errors, genericUtils, itemUtils, tokenUtils, workflowUtils, templateUtils} from '../../../utils.js';
 async function use({workflow}) {
     let activityIdentifier = activityUtils.getIdentifier(workflow.activity);
     let concentrationEffect = effectUtils.getConcentrationEffect(workflow.actor, workflow.item);
@@ -122,8 +122,9 @@ async function late({workflow}) {
         let effect = workflow.actor.effects.find(i => i.getDependents().map(j => j.uuid)?.includes(template.uuid));
         if (effect) await genericUtils.update(effect, {'duration.turns': 1});
         if (itemUtils.getConfig(workflow.item, 'useRealDarkness')) {
-            let offset = (template.width / 2) * canvas.grid.size / canvas.grid.distance;
-            let darknessSourceArr = await genericUtils.createEmbeddedDocuments(template.parent, 'AmbientLight', [{config: {negative: true, dim: template.width / 2, animation: {type: itemUtils.getConfig(workflow.item, 'darknessAnimation')}}, x: template.object.center.x + offset, y: template.object.center.y + offset}]);
+            let offset = (templateUtils.getTemplateWidth(template) / 2) * canvas.grid.size / canvas.grid.distance;
+            let templatePosition = templateUtils.getTemplatePosition(template);
+            let darknessSourceArr = await genericUtils.createEmbeddedDocuments(template.parent, 'AmbientLight', [{config: {negative: true, dim: templateUtils.getTemplateWidth(template) / 2, animation: {type: itemUtils.getConfig(workflow.item, 'darknessAnimation')}}, x: templatePosition.x + offset, y: templatePosition.y + offset}]);
             effectUtils.addDependent(template, darknessSourceArr, true);
         }
     }

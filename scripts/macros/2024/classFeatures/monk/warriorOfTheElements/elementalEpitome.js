@@ -4,9 +4,9 @@ async function swapResistance({trigger: {entity: item}}) {
     let effect = effectUtils.getEffectByIdentifier(item.parent, 'elementalAttunementEffect');
     if (!effect) return;
     let damageType = await chooseResistance(item);
-    let resistance = effect.changes.find(c => c.key === 'system.traits.dr.value');
+    let resistance = effectUtils.getChanges(effect).find(c => c.key === 'system.traits.dr.value');
     if (resistance) resistance.value = damageType;
-    else effect.changes.push(
+    else effectUtils.getChanges(effect).push(
         {
             key: 'system.traits.dr.value',
             value: damageType,
@@ -14,7 +14,7 @@ async function swapResistance({trigger: {entity: item}}) {
             priority: 20
         }
     );
-    await genericUtils.update(effect, {changes: effect.changes});
+    await genericUtils.update(effect, effectUtils.changesUpdateData(effectUtils.getChanges(effect)));
 }
 export async function chooseResistance(item, context='CHRISPREMADES.Macros.InfuseItem.ResistanceType') {
     let damageTypes = itemUtils.getConfig(item, 'damageTypes');

@@ -266,7 +266,7 @@ async function otherEarly({trigger, workflow}) {
     } else
     */
     if (effectUtils.getEffectByIdentifier(targetActor, 'halfCover')) return;
-    effectData.changes.push({
+    effectUtils.getChanges(effectData).push({
         key: 'system.attributes.ac.bonus',
         mode: 2,
         value: 2,

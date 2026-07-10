@@ -299,7 +299,7 @@ export async function run() {
         addLine('Notes: ' + scene.notes.size);
         addLine('Regions: ' + scene.regions.size);
         addLine('Sounds: ' + scene.sounds.size);
-        addLine('Templates: ' + scene.templates.size);
+        addLine('Templates: ' + (game.release.generation > 13 ? scene.regions.filter(i => i.flags?.core?.MeasuredTemplate).length : scene.templates.size));
         addLine('Tiles: ' + scene.tiles.size);
         addLine('Tokens: ' + scene.tokens.size);
         let nonActors = scene.tokens.filter(i => !i.actor);

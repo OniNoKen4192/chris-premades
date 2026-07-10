@@ -1,5 +1,5 @@
 let {ApplicationV2, HandlebarsApplicationMixin} = foundry.applications.api;
-import {genericUtils, constants} from '../utils.js';
+import {genericUtils, constants, effectUtils} from '../utils.js';
 import {EmbeddedMacros} from './embeddedMacros.js';
 export class EffectMedkit extends HandlebarsApplicationMixin(ApplicationV2) {
     constructor(context, effectDocument) {
@@ -174,8 +174,8 @@ export class EffectMedkit extends HandlebarsApplicationMixin(ApplicationV2) {
                 }
             },
             overTime: {
-                original: effect?.changes?.find(i => i.key === 'flags.midi-qol.OverTime')?.value,
-                show: effect?.changes?.find(i => i.key === 'flags.midi-qol.OverTime')?.value ? true : false
+                original: effectUtils.getChanges(effect).find(i => i.key === 'flags.midi-qol.OverTime')?.value,
+                show: effectUtils.getChanges(effect).find(i => i.key === 'flags.midi-qol.OverTime')?.value ? true : false
             },
             macros: {
                 effect: JSON?.stringify(effect.flags['chris-premades']?.macros?.effect) ?? '',
@@ -373,10 +373,10 @@ export class EffectMedkit extends HandlebarsApplicationMixin(ApplicationV2) {
             overTimeFields.forEach(i => {
                 if (i.value && (i.value != '')) overTimeValue += i.key + '=' + i.value + ',';
             });
-            if (effectData.changes.find(i => i.key === 'flags.midi-qol.OverTime')) {
-                effectData.changes.find(i => i.key === 'flags.midi-qol.OverTime').value = overTimeValue;
+            if (effectUtils.getChanges(effectData).find(i => i.key === 'flags.midi-qol.OverTime')) {
+                effectUtils.getChanges(effectData).find(i => i.key === 'flags.midi-qol.OverTime').value = overTimeValue;
             } else {
-                effectData.changes.push({
+                effectUtils.getChanges(effectData).push({
                     key: 'flags.midi-qol.OverTime',
                     value: overTimeValue,
                     mode: 0,

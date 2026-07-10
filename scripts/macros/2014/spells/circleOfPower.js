@@ -63,7 +63,7 @@ async function create({trigger: {entity: effect, target, identifier}}) {
         name: effect.name,
         img: effect.img,
         origin: effect.uuid,
-        changes: effect.changes,
+        changes: effectUtils.getChanges(effect),
         duration: {
             seconds: effect.duration.remaining
         },

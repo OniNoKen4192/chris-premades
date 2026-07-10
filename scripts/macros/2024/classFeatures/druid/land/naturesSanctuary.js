@@ -11,7 +11,7 @@ async function use({workflow}) {
             {
                 key: 'system.traits.dr.value',
                 mode: 2,
-                value: effectUtils.getEffectByIdentifier(workflow.actor, 'naturesWard')?.changes[1].value ?? 'fire',
+                value: effectUtils.getChanges(effectUtils.getEffectByIdentifier(workflow.actor, 'naturesWard'))[1]?.value ?? 'fire',
                 priority: 20
             }
         ]
@@ -69,10 +69,8 @@ async function move({workflow}) {
     if (!template) return;
     let preTokens = new Set(template.parent.tokens.filter(t => t.actor && effectUtils.getEffectByIdentifier(t.actor, 'naturesSanctuary')).map(t => t.object));
     let postTokens = workflow.targets;
-    await genericUtils.update(template, {
-        x: newTemplate.x ?? template.x,
-        y: newTemplate.y ?? template.y
-    });
+    let newPosition = templateUtils.getTemplatePosition(newTemplate);
+    await templateUtils.moveTemplate(template, newPosition);
     await genericUtils.remove(newTemplate);
     let toRemove = preTokens.difference(postTokens);
     let toAdd = postTokens.difference(preTokens);

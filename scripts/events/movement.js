@@ -197,7 +197,7 @@ async function moveToken(token, movement, options, user) {
         let leavingTemplates = previousTemplates.filter(i => !currentTemplates.includes(i));
         let enteringTemplates = currentTemplates.filter(i => !previousTemplates.includes(i));
         let stayingTemplates = previousTemplates.filter(i => currentTemplates.includes(i));
-        let throughTemplates = token.parent.templates.reduce((acc, template) => {
+        let throughTemplates = templateUtils.getSceneTemplates(token.parent).reduce((acc, template) => {
             let intersected = templateUtils.rayIntersectsTemplate(template, moveRay);
             if (!intersected) return acc;
             acc.push(template);

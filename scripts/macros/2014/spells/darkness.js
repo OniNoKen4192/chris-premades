@@ -1,4 +1,4 @@
-import {animationUtils, dialogUtils, effectUtils, genericUtils, itemUtils, tokenUtils} from '../../../utils.js';
+import {animationUtils, dialogUtils, effectUtils, genericUtils, itemUtils, templateUtils, tokenUtils} from '../../../utils.js';
 async function use({workflow}) {
     let concentrationEffect = effectUtils.getConcentrationEffect(workflow.actor, workflow.item);
     let playAnimation = itemUtils.getConfig(workflow.item, 'playAnimation');
@@ -39,7 +39,8 @@ async function use({workflow}) {
     let attachUuids = [template.uuid];
     let darknessSource;
     if (useRealDarkness) {
-        [darknessSource] = await genericUtils.createEmbeddedDocuments(template.parent, 'AmbientLight', [{config: {negative: true, dim: template.distance, animation: {type: darknessAnimation}}, x: template.x, y: template.y}]);
+        let templatePosition = templateUtils.getTemplatePosition(template);
+        [darknessSource] = await genericUtils.createEmbeddedDocuments(template.parent, 'AmbientLight', [{config: {negative: true, dim: templateUtils.getTemplateDistance(template), animation: {type: darknessAnimation}}, x: templatePosition.x, y: templatePosition.y}]);
         attachUuids.push(darknessSource.uuid);
         effectUtils.addDependent(template, [darknessSource]);
     }

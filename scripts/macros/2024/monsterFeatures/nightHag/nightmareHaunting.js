@@ -15,7 +15,7 @@ async function use({trigger: {entity: item}, workflow}) {
         let totalMax = token.actor.system.attributes.hp.max;
         let effect = effectUtils.getEffectByIdentifier(token.actor, 'nightmareHauntingEffect');
         if (effect) {
-            let currReduction = parseInt(effect.changes[0].value);
+            let currReduction = parseInt(effectUtils.getChanges(effect)[0].value);
             await genericUtils.update(effect, {
                 changes: [
                     {

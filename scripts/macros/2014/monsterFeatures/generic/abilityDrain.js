@@ -18,7 +18,7 @@ async function use({workflow}) {
     let actualChange = Math.min(currAbility, drainRoll.total);
     let effect = await effectUtils.getAllEffectsByIdentifier(targetToken.actor, 'abilityDrain').find(async i => (await effectUtils.getOriginItem(i))?.uuid === workflow.item.uuid);
     if (effect) {
-        let currDowngrade = parseInt(effect.changes[0].value);
+        let currDowngrade = parseInt(effectUtils.getChanges(effect)[0].value);
         await genericUtils.update(effect, {changes: [{
             key: 'system.abilities.' + ability + '.value',
             mode: 2,

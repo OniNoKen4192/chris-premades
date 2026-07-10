@@ -34,15 +34,15 @@ async function use({trigger, workflow}) {
         let combatInspirationEffect = combatInspiration.effects.contents?.[0];
         if (combatInspirationEffect) {
             let combatInspirationEffectData = genericUtils.duplicate(combatInspirationEffect.toObject());
-            combatInspirationEffectData.changes[0].value = combatInspiration.name;
-            combatInspirationEffectData.changes.forEach(i => {
+            effectUtils.getChanges(combatInspirationEffectData)[0].value = combatInspiration.name;
+            effectUtils.getChanges(combatInspirationEffectData).forEach(i => {
                 if (i.key === 'flags.midi-qol.optional.combatinspiration.label') {
                     i.value = combatInspiration.name;
                 } else if (i.key != 'flags.midi-qol.optional.combatinspiration.count') {
                     i.value = scale.formula;
                 }
             });
-            effectData.changes.push(...combatInspirationEffectData.changes);
+            effectUtils.getChanges(effectData).push(...effectUtils.getChanges(combatInspirationEffectData));
         }
         await combatInspiration.displayCard();
     }

@@ -46,7 +46,7 @@ async function create({trigger: {entity: effect, target, identifier}}) {
         }
     };
     if (effect.flags['chris-premades'].auraOfLife.removeTempmaxDebuffs) {
-        effectData.changes.push({
+        effectUtils.getChanges(effectData).push({
             key: 'system.attributes.hp.tempmax',
             mode: 4,
             value: 0,
@@ -70,11 +70,11 @@ async function turnStart({trigger: {token}}) {
     }
 }
 function preEffect(effect, updates, options) {
-    if (!updates.changes || !updates.changes.length || !effect.parent) return;
+    if (!effectUtils.getChanges(updates).length || !effect.parent) return;
     if (effect.parent?.documentName !== 'Actor') return;
     if (!effectUtils.getEffectByIdentifier(effect.parent, 'auraOfLifeAura')) return;
     let changed = false;
-    for (let i of updates.changes) {
+    for (let i of effectUtils.getChanges(updates)) {
         if (i.key !== 'system.attributes.hp.tempmax') continue;
         let number = Number(i.value);
         if (isNaN(number) || number >= 0) continue;
@@ -82,7 +82,7 @@ function preEffect(effect, updates, options) {
         changed = true;
     }
     if (!changed) return;
-    effect.updateSource({changes: updates.changes});
+    effect.updateSource(effectUtils.changesUpdateData(effectUtils.getChanges(updates)));
 }
 export let auraOfLife = {
     name: 'Aura of Life',

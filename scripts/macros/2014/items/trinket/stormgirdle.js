@@ -23,13 +23,13 @@ async function use({trigger, workflow}) {
     effectUtils.addMacro(effectData, 'midi.actor', ['stormAvatar']);
     let identifier = genericUtils.getIdentifier(workflow.item);
     if (identifier === 'stormgirdleA' || identifier === 'stormgirdleE') {
-        effectData.changes.push({
+        effectUtils.getChanges(effectData).push({
             key: 'system.attributes.movement.fly',
             mode: 4,
             value: 30,
             priority: 20
         });
-        effectData.changes.push({
+        effectUtils.getChanges(effectData).push({
             key: 'system.attributes.movement.hover',
             mode: 5,
             value: 1,

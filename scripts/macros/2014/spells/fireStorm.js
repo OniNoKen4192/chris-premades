@@ -28,7 +28,7 @@ async function early({workflow}) {
         let template = new game.dnd5e.canvas.AbilityTemplate(templateDoc);
         try {
             let [finalTemplate] = await template.drawPreview();
-            templates.push(finalTemplate);
+            templates.push(templateUtils.resolveTemplate(finalTemplate));
         } catch {/* empty */}
         if (templates.length != i + 1) break;
     }
@@ -36,7 +36,7 @@ async function early({workflow}) {
     if (!templates.length) return;
     let targets = new Set();
     for (let i of templates) {
-        let position = i.object.ray.project(0.5);
+        let position = templateUtils.getTemplateCenter(i);
         if (playAnimation && animationUtils.jb2aCheck()) {
             new Sequence()
                 .effect()

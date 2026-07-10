@@ -1,4 +1,4 @@
-import {activityUtils, actorUtils, animationUtils, dialogUtils, effectUtils, genericUtils, itemUtils, workflowUtils} from '../../../utils.js';
+import {activityUtils, actorUtils, animationUtils, dialogUtils, effectUtils, genericUtils, itemUtils, workflowUtils, templateUtils} from '../../../utils.js';
 async function use({workflow}) {
     let storming = await dialogUtils.confirm(workflow.item.name, 'CHRISPREMADES.Macros.CallLightning.Storming');
     let castLevel = workflowUtils.getCastLevel(workflow);
@@ -55,7 +55,7 @@ function animation(workflow, dependent) {
     /* eslint-disable indent */
     new Sequence()
         .effect(itemUtils.getConfig(workflow.item, 'animationColor'))
-            .atLocation(workflow.template)
+            .atLocation(templateUtils.getTemplateCenter(workflow.template))
             .tieToDocuments(dependent)
             .scaleToObject()
             .randomSpriteRotation()

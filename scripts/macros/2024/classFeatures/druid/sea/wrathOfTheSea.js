@@ -21,7 +21,7 @@ async function use({workflow}) {
         duration: itemUtils.convertDuration(workflow.activity),
         changes: []
     };
-    if (stormborn) effectData.changes.push([
+    if (stormborn) effectUtils.getChanges(effectData).push([
         {
             key: 'system.attributes.movement.fly',
             mode: 4,

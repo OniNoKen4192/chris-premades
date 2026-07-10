@@ -56,7 +56,7 @@ async function use({workflow}) {
         }
     };
     if (Object.keys(CONFIG.DND5E.weaponIds).includes(weapToolSelected)) {
-        effectData.changes.push({
+        effectUtils.getChanges(effectData).push({
             key: 'system.traits.weaponProf.value',
             mode: 2,
             value: weapToolSelected,
@@ -65,7 +65,7 @@ async function use({workflow}) {
     } else {
         let ability = await dialogUtils.buttonDialog(workflow.item.name, 'CHRISPREMADES.Macros.AstralTrance.Ability', Object.values(CONFIG.DND5E.abilities).map(i => [i.label, i.abbreviation]));
         if (!ability) ability = 'int';
-        effectData.changes.push({
+        effectUtils.getChanges(effectData).push({
             key: 'system.tools.' + weapToolSelected + '.value',
             mode: 4,
             value: 1,

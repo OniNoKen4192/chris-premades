@@ -35,7 +35,7 @@ async function use({workflow}) {
     if (config.doubleDice) {
         effectUtils.addMacro(effectData, 'midi.actor', ['enlargeEnlarged']);
     } else {
-        effectData.changes.push(
+        effectUtils.getChanges(effectData).push(
             {
                 key: 'system.bonuses.mwak.damage',
                 mode: 2,

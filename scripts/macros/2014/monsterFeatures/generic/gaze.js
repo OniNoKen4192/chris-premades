@@ -32,7 +32,7 @@ async function turnStart({trigger: {entity: item, token, target}}) {
                 }
             };
             if (gazeConfig.avertGrantsAdvantage) {
-                effectData.changes.push({
+                effectUtils.getChanges(effectData).push({
                     key: 'flags.midi-qol.grants.advantage.attack.all',
                     mode: 0,
                     value: 'targetActorUuid === "' + token.actor.uuid + '"',

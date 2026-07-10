@@ -107,7 +107,7 @@ async function use({workflow}) {
         changes: []
     };
     if (!customKeepSpells && druidLevel < 20) {
-        effectData.changes.push({
+        effectUtils.getChanges(effectData).push({
             key: 'flags.midi-qol.fail.spell.material',
             value: 1,
             mode: 0,
@@ -115,7 +115,7 @@ async function use({workflow}) {
         });
     }
     if (!customKeepSpells && druidLevel < 18) {
-        effectData.changes.push(
+        effectUtils.getChanges(effectData).push(
             {
                 key: 'flags.midi-qol.fail.spell.vocal',
                 value: 1,

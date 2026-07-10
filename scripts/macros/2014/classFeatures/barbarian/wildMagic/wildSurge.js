@@ -158,7 +158,7 @@ async function use({workflow}) {
                 ]
             };
             if (weapon.isVersatile) {
-                enchantData.changes.push({
+                effectUtils.getChanges(enchantData).push({
                     key: 'system.damage.versatile.types',
                     mode: 5,
                     value: '["force"]',
@@ -193,6 +193,7 @@ async function use({workflow}) {
             };
             // This looks bad but actually it's good, they'll be allowed to do this and it means not socketing game.user
             let [template] = await canvas.scene.createEmbeddedDocuments('MeasuredTemplate', [templateData]);
+            template = templateUtils.resolveTemplate(template);
             await tokenUtils.attachToToken(workflow.token, [template.uuid]);
             effect = await effectUtils.createEffect(workflow.actor, effectData, {parentEntity: rageEffect, identifier: 'wildSurge'});
             await effectUtils.addDependent(effect, [template]);

@@ -41,7 +41,7 @@ async function use({trigger, workflow}) {
     };
     let songOfVictory = itemUtils.getItemByIdentifier(workflow.actor, 'songOfVictory');
     if (songOfVictory) {
-        effectData.changes.push({
+        effectUtils.getChanges(effectData).push({
             key: 'system.bonuses.mwak.damage',
             mode: 2,
             value: '+' + workflow.actor.system.abilities.int.mod,

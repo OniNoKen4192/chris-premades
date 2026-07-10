@@ -216,7 +216,7 @@ async function use({workflow}) {
                     priority: 20
                 }
             ];
-            if (classLevel >= 11) positiveEffectData.changes.push(
+            if (classLevel >= 11) effectUtils.getChanges(positiveEffectData).push(
                 {
                     key: 'system.traits.ci.value',
                     mode: 2,

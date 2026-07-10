@@ -1,4 +1,4 @@
-import {dialogUtils, genericUtils, itemUtils} from '../../../../../utils.js';
+import {dialogUtils, genericUtils, itemUtils, effectUtils} from '../../../../../utils.js';
 async function select({trigger, workflow}) {
     let allArmor = workflow.actor.items.filter(i => i.type === 'equipment' && ['heavy', 'medium', 'light'].includes(i.system.type?.value));
     if (!allArmor.length) return;
@@ -17,7 +17,7 @@ async function select({trigger, workflow}) {
     let effectData = effect.toObject();
     delete effectData._id;
     effectData.origin = effect.uuid;
-    effectData.changes.push({
+    effectUtils.getChanges(effectData).push({
         key: 'name',
         mode: 5,
         value: '{} (' + workflow.item.name + ')',

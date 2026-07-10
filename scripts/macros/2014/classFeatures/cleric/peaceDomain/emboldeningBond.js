@@ -26,7 +26,7 @@ async function checkBonus(token, checkTurnOn, checkTurnOff) {
         return;
     }
     if (bonusActive) return;
-    updates.changes.push({
+    effectUtils.getChanges(updates).push({
         key: 'system.attributes.init.bonus',
         mode: 2,
         value: '1d4',

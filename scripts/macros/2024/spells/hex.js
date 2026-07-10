@@ -49,7 +49,7 @@ async function use({trigger, workflow}) {
             }
         ]
     };
-    if (itemUtils.getItemByIdentifier(workflow.actor, 'eldritchHex')) targetEffectData.changes.push({
+    if (itemUtils.getItemByIdentifier(workflow.actor, 'eldritchHex')) effectUtils.getChanges(targetEffectData).push({
         key: 'flags.midi-qol.disadvantage.save.' + selection,
         mode: 0,
         value: true,

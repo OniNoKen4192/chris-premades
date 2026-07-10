@@ -1,4 +1,4 @@
-import {activityUtils, effectUtils, genericUtils, itemUtils, tokenUtils, workflowUtils} from '../../../utils.js';
+import {activityUtils, effectUtils, genericUtils, itemUtils, tokenUtils, workflowUtils, templateUtils} from '../../../utils.js';
 
 async function use({workflow}) {
     let concentrationEffect = effectUtils.getConcentrationEffect(workflow.actor, workflow.item);
@@ -63,11 +63,7 @@ async function move({workflow}) {
     let template = await fromUuid(effect?.flags['chris-premades'].gustOfWind.templateUuid);
     let newTemplate = workflow.template;
     if (!template || !newTemplate) return;
-    await genericUtils.update(template, {
-        x: newTemplate.x,
-        y: newTemplate.y,
-        direction: newTemplate.direction
-    });
+    await templateUtils.copyTemplatePlacement(template, newTemplate);
     await genericUtils.remove(newTemplate);
 }
 async function startTurn({trigger: {entity: template, castData, token}}) {
@@ -75,7 +71,7 @@ async function startTurn({trigger: {entity: template, castData, token}}) {
     if (!feature) return;
     let featureWorkflow = await workflowUtils.syntheticActivityRoll(feature, [token]);
     if (!featureWorkflow.failedSaves.size) return;
-    let gustAngle = template.object.ray.angle;
+    let gustAngle = templateUtils.getTemplateRay(template).angle;
     let ray = foundry.canvas.geometry.Ray.fromAngle(token.center.x, token.center.y, gustAngle, canvas.dimensions.size);
     await tokenUtils.moveTokenAlongRay(token, ray, 15);
 }

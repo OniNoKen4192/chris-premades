@@ -63,14 +63,14 @@ async function use({workflow}) {
     effectUtils.addMacro(effectData, 'effect', ['wildShapeActive']);
     effectUtils.addMacro(effectData, 'midi.actor', ['wildShapeActive']);
     let improvedCircleForms = itemUtils.getItemByIdentifier(workflow.actor, 'improvedCircleForms');
-    if (improvedCircleForms) effectData.changes.push({
+    if (improvedCircleForms) effectUtils.getChanges(effectData).push({
         key: 'system.abilities.con.bonuses.save',
         mode: 2,
         value: '@abilities.wis.mod',
         priority: 20
     });
     let lunarForm = itemUtils.getItemByIdentifier(workflow.actor, 'lunarForm');
-    if (lunarForm) effectData.changes.push(...[
+    if (lunarForm) effectUtils.getChanges(effectData).push(...[
         {
             key: 'flags.midi-qol.optional.LunarForm.damage.mwak',
             mode: 5,

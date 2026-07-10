@@ -60,7 +60,7 @@ async function use({workflow}) {
         ]
     };
     if (tier === 3) {
-        effectData.changes.push(
+        effectUtils.getChanges(effectData).push(
             {
                 key: 'system.traits.dr.value',
                 value: 'slashing',
@@ -82,7 +82,7 @@ async function use({workflow}) {
         );
     }
     if (activityIdentifier === 'starryFormDragon') {
-        effectData.changes.push(
+        effectUtils.getChanges(effectData).push(
             {
                 key: 'system.abilities.wis.check.roll.min',
                 value: 10,
@@ -103,7 +103,7 @@ async function use({workflow}) {
             }
         );
         if (tier > 1) {
-            effectData.changes.push(
+            effectUtils.getChanges(effectData).push(
                 {
                     key: 'system.attributes.movement.fly',
                     value: 20,

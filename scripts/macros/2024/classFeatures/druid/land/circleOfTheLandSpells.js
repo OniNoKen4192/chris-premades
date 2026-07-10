@@ -39,7 +39,7 @@ async function use({workflow}) {
     await genericUtils.createEmbeddedDocuments(workflow.actor, 'Item', newSpells);
     let naturesWardEffect = effectUtils.getEffectByIdentifier(workflow.actor, 'naturesWard');
     if (!naturesWardEffect) return;
-    let newChanges = naturesWardEffect.toObject().changes;
+    let newChanges = genericUtils.duplicate(effectUtils.getChanges(naturesWardEffect));
     switch (selection) {
         case 'land-arid':
             newChanges[1].value = 'fire';
@@ -53,7 +53,7 @@ async function use({workflow}) {
         case 'land-tropical':
             newChanges[1].value = 'poison';
     }
-    await genericUtils.update(naturesWardEffect, {changes: newChanges});
+    await genericUtils.update(naturesWardEffect, effectUtils.changesUpdateData(newChanges));
 }
 export let circleOfTheLandSpells = {
     name: 'Circle of the Land Spells',

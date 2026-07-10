@@ -227,7 +227,7 @@ async function hasConditionBy(sourceActor, targetActor, statusId) {
         if (originItem?.actor != sourceActor) return;
         if (effect.statuses.has(statusId)) return true;
         if (effect.flags['chris-premades']?.conditions?.includes(statusId)) return true;
-        if (effect.changes.find(i => validKeys.includes(i.key) && i.value.toLowerCase() === statusId)) return true;
+        if (effectUtils.getChanges(effect).find(i => validKeys.includes(i.key) && i.value.toLowerCase() === statusId)) return true;
     });
     return hasCondition ? true : false;
 }

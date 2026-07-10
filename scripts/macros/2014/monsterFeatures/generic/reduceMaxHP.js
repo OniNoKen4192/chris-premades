@@ -36,7 +36,7 @@ async function late({workflow}) {
         let totalMax = token.actor.system.attributes.hp.max;
         let effect = await effectUtils.getAllEffectsByIdentifier(token.actor, 'reduceMaxHP').find(async i => (await effectUtils.getOriginItem(i))?.uuid === workflow.item.uuid);
         if (effect) {
-            let currReduction = parseInt(effect.changes[0].value);
+            let currReduction = parseInt(effectUtils.getChanges(effect)[0].value);
             await genericUtils.update(effect, {
                 changes: [
                     {

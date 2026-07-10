@@ -109,10 +109,40 @@ async function createMeasuredTemplate(template) {
     await executeMacroPass([template], 'created');
     await templateExtension.templateEffectCreated(template);
 }
+// V14: the MeasuredTemplate document hooks no longer fire; template-backed Regions
+// (flags.core.MeasuredTemplate) fire the Region document hooks instead
+function isTemplateRegion(region) {
+    return !!genericUtils.getProperty(region, 'flags.core.MeasuredTemplate');
+}
+async function createRegionTemplate(region, options, userId) {
+    if (!isTemplateRegion(region)) return;
+    await createMeasuredTemplate(region);
+}
+async function updateRegionTemplate(region, updates, context, userId) {
+    if (!isTemplateRegion(region)) return;
+    if (!socketUtils.isTheGM()) return;
+    let oldPosition = genericUtils.getProperty(context, 'chris-premades.oldPosition');
+    if (!updates.shapes || !oldPosition) return;
+    let newPosition = templateUtils.getTemplatePosition(region);
+    let delta = {x: newPosition.x - oldPosition.x, y: newPosition.y - oldPosition.y};
+    if (!delta.x && !delta.y) return;
+    await attach.updateAttachments(region, delta);
+    await executeMacroPass([region], 'moved');
+    await templateExtension.templateEffectMoved(region);
+}
+async function deleteRegionTemplate(region, options, userId) {
+    if (!isTemplateRegion(region)) return;
+    if (!socketUtils.isTheGM() || !region.id) return;
+    await executeMacroPass([region], 'deleted');
+    await templateExtension.templateEffectDeleted(region);
+}
 export let templateEvents = {
     collectMacros,
     executeMacroPass,
     updateMeasuredTemplate,
     deleteMeasuredTemplate,
-    createMeasuredTemplate
+    createMeasuredTemplate,
+    createRegionTemplate,
+    updateRegionTemplate,
+    deleteRegionTemplate
 };

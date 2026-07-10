@@ -285,7 +285,7 @@ async function rollSkill(wrapped, config, dialog = {}, message = {}) {
         }
         messageData = message.data;
         if (overtimeActorUuid) messageData['flags.midi-qol.overtimeActorUuid'] = overtimeActorUuid;
-        rollMode = message.rollMode ?? game.settings.get('core', 'rollMode');
+        rollMode = message.rollMode ?? genericUtils.getCoreRollMode();
     };
     Hooks.once('dnd5e.preRollSkillV2', messageDataFunc);
     if (Object.entries(options).length) config.rolls = [{options}];

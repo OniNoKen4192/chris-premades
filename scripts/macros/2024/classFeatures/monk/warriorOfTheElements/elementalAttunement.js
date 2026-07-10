@@ -17,7 +17,7 @@ async function use({workflow}) {
     };
     effectUtils.addMacro(effectData, 'midi.actor', ['elementalAttunementElementalStrikes']);
     if (itemUtils.getItemByIdentifier(workflow.actor, 'strideOfTheElements')) {
-        effectData.changes.push(
+        effectUtils.getChanges(effectData).push(
             {
                 key: 'system.attributes.movement.fly',
                 value: '@attributes.movement.speed',
@@ -34,7 +34,7 @@ async function use({workflow}) {
     }
     let epitome = itemUtils.getItemByIdentifier(workflow.actor, 'elementalEpitome');
     if (epitome) {
-        effectData.changes.push(
+        effectUtils.getChanges(effectData).push(
             {
                 key: 'system.traits.dr.value',
                 value: await chooseResistance(epitome),
@@ -73,7 +73,7 @@ async function use({workflow}) {
         ]
     };
     await Promise.all(items.map(async i => {
-        enchantmentData.changes[0].value = (i.system.range.reach ?? 5) + 10;
+        effectUtils.getChanges(enchantmentData)[0].value = (i.system.range.reach ?? 5) + 10;
         await itemUtils.enchantItem(i, enchantmentData, {parentEntity: effect, strictlyInterdependent: true, identifier: 'elementalAttunementEnchantment'});
     }));
 }

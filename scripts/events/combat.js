@@ -102,7 +102,7 @@ function collectTokenMacros(token, pass, distance, target) {
     let templates;
     if (pass === 'turnStartSource' || pass === 'turnEndSource') {
         let check = pass === 'turnEndSource' ? 'previous' : 'current';
-        templates = token.parent.templates.filter(template => {
+        templates = templateUtils.getSceneTemplates(token.parent).filter(template => {
             if (!template.flags.dnd5e?.origin) return;
             let originItem = fromUuidSync(template.flags.dnd5e.item);
             if (!originItem) return;

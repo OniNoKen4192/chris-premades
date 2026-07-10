@@ -6,7 +6,7 @@ async function attack({trigger: {entity: item}, workflow}) {
     if (!sourceEffect) return;
     let effectData = genericUtils.duplicate(sourceEffect.toObject());
     effectData.origin = sourceEffect.uuid;
-    effectData.changes[0].value = 'workflow.token.id === "' + workflow.token.id + '"';
+    effectUtils.getChanges(effectData)[0].value = 'workflow.token.id === "' + workflow.token.id + '"';
     await effectUtils.createEffect(workflow.targets.first().actor, effectData);
 }
 export let studiedAttacks = {

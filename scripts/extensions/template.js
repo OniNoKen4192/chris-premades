@@ -87,6 +87,15 @@ async function templateEffectCreated(template) {
 async function preUpdateMeasuredTemplate(template, updates, options, userId) {
     if (updates.x || updates.y) genericUtils.setProperty(options, 'chris-premades.oldPosition', {x: template.x, y: template.y});
 }
+// V14: template-backed Regions (flags.core.MeasuredTemplate) fire the Region document hooks
+function preCreateRegionTemplate(region, updates, options, userId) {
+    if (!genericUtils.getProperty(region, 'flags.core.MeasuredTemplate')) return;
+    return preCreateMeasuredTemplate(region, updates, options, userId);
+}
+async function preUpdateRegionTemplate(region, updates, options, userId) {
+    if (!genericUtils.getProperty(region, 'flags.core.MeasuredTemplate')) return;
+    if (updates.shapes) genericUtils.setProperty(options, 'chris-premades.oldPosition', templateUtils.getTemplatePosition(region));
+}
 export let template = {
     preCreateMeasuredTemplate,
     templateEffectTokenEnter,
@@ -94,5 +103,7 @@ export let template = {
     templateEffectMoved,
     templateEffectDeleted,
     templateEffectCreated,
-    preUpdateMeasuredTemplate
+    preUpdateMeasuredTemplate,
+    preCreateRegionTemplate,
+    preUpdateRegionTemplate
 };

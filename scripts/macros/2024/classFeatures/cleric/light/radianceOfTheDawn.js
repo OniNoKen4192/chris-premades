@@ -11,7 +11,7 @@ async function early({trigger, workflow}) {
 }
 async function use({trigger, workflow}) {
     if (!workflow.template) return;
-    let darknessTemplates = workflow.template.parent.templates.filter(template => template.flags['chris-premades']?.template?.visibility?.magicalDarkness).filter(template => templateUtils.overlap(workflow.template, template));
+    let darknessTemplates = templateUtils.getSceneTemplates(workflow.template.parent).filter(template => template.flags['chris-premades']?.template?.visibility?.magicalDarkness).filter(template => templateUtils.overlap(workflow.template, template));
     await genericUtils.deleteEmbeddedDocuments(workflow.template.parent, 'MeasuredTemplate', darknessTemplates.map(i => i.id));
 }
 async function added({trigger: {entity: item}}) {

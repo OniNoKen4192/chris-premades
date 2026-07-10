@@ -54,7 +54,7 @@ async function use({trigger, workflow}) {
     };
     if (!native) {
         let sourceEffectData = genericUtils.duplicate(sourceEffect.toObject());
-        effectData.changes.push(...sourceEffectData.changes);
+        effectUtils.getChanges(effectData).push(...effectUtils.getChanges(sourceEffectData));
     } else {
         genericUtils.setProperty(effectData, 'flags.dae.showIcon', true);
         delete effectData.duration;

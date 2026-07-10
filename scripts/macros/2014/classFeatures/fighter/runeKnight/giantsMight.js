@@ -48,7 +48,7 @@ async function use({workflow}) {
             });
             genericUtils.setProperty(effectData, 'flags.chris-premades.effect.sizeAnimation', false);
         } else {
-            effectData.changes.push({
+            effectUtils.getChanges(effectData).push({
                 key: 'system.traits.size',
                 mode: 5,
                 value: canBeHuge ? 'huge' : 'lg',

@@ -1,4 +1,4 @@
-import {activityUtils, animationUtils, combatUtils, effectUtils, genericUtils, itemUtils, workflowUtils} from '../../../utils.js';
+import {activityUtils, animationUtils, combatUtils, effectUtils, genericUtils, itemUtils, workflowUtils, templateUtils} from '../../../utils.js';
 async function use({workflow}) {
     let concentrationEffect = effectUtils.getConcentrationEffect(workflow.actor, workflow.item);
     let template = workflow.template;
@@ -62,7 +62,7 @@ async function move({trigger: {entity: effect, token}}) {
     function getAllowedMoveLocation(casterToken, template, maxSquares) {
         for (let i = maxSquares; i > 0; i--) {
             let movePixels = i * canvas.grid.size;
-            let ray = new foundry.canvas.geometry.Ray(casterToken.center, template.object.center);
+            let ray = new foundry.canvas.geometry.Ray(casterToken.center, templateUtils.getTemplatePosition(template));
             let newCenter = ray.project((ray.distance + movePixels)/ray.distance);
             let isAllowedLocation = canvas.visibility.testVisibility(newCenter, {object: template.object});
             if (isAllowedLocation) return newCenter;
@@ -77,7 +77,7 @@ async function move({trigger: {entity: effect, token}}) {
         return;
     }
     newCenter = canvas.grid.getSnappedPoint(newCenter, {mode: CONST.GRID_SNAPPING_MODES.TOP_LEFT_CORNER});
-    await genericUtils.update(template, {x: newCenter.x, y: newCenter.y});
+    await templateUtils.moveTemplate(template, {x: newCenter.x, y: newCenter.y});
 }
 async function enterOrTurn({trigger: {entity: template, castData, token}}) {
     if (combatUtils.inCombat()) {

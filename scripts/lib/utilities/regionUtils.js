@@ -13,6 +13,18 @@ async function createRegions(regionDatas, scene, {parentEntity, excludeGPSRegion
     if (parentEntity) await effectUtils.addDependent(parentEntity, regions);
     return regions;
 }
+function rayToRegionShape(ray, width, {hole = false} = {}) {
+    // Rectangle polygon of the given width (grid units) around the ray's line segment
+    let halfWidth = (width * canvas.grid.size / canvas.grid.distance) / 2;
+    let perpendicular = ray.angle + Math.PI / 2;
+    let deltaX = Math.cos(perpendicular) * halfWidth;
+    let deltaY = Math.sin(perpendicular) * halfWidth;
+    return {
+        hole: hole,
+        type: 'polygon',
+        points: [ray.A.x + deltaX, ray.A.y + deltaY, ray.B.x + deltaX, ray.B.y + deltaY, ray.B.x - deltaX, ray.B.y - deltaY, ray.A.x - deltaX, ray.A.y - deltaY]
+    };
+}
 function templateToRegionShape(template, {hole = false} = {}) {
     let origShape = template.object.shape ?? template.object._computeShape();
     let points = origShape.points ?? origShape.toPolygon().points;
@@ -148,6 +160,7 @@ function tokensInRegion(region) {
 export let regionUtils = {
     createRegions,
     templateToRegionShape,
+    rayToRegionShape,
     getCastData,
     getCastLevel,
     getBaseLevel,

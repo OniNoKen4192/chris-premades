@@ -28,9 +28,9 @@ async function preambleComplete(workflow) {
     if (workflow.workflowOptions.isOverTime) {
         try {
             let effects = actorUtils.getEffects(workflow.targets.first().actor);
-            let effect = effects.find(i => i.changes.find(j => j.key === 'flags.midi-qol.OverTime' && j.value.includes(workflow.item.name))) ?? effects.find(i => i.name === workflow.item.name && i.changes.find(j => j.key === 'flags.midi-qol.OverTime'));
+            let effect = effects.find(i => effectUtils.getChanges(i).find(j => j.key === 'flags.midi-qol.OverTime' && j.value.includes(workflow.item.name))) ?? effects.find(i => i.name === workflow.item.name && effectUtils.getChanges(i).find(j => j.key === 'flags.midi-qol.OverTime'));
             if (effect) {
-                effect.changes.forEach(element => {
+                effectUtils.getChanges(effect).forEach(element => {
                     if (validKeys.includes(element.key)) activityConditions.add(element.value.toLowerCase());
                 });
                 let effectConditions = effect.flags['chris-premades']?.conditions;

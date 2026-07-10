@@ -37,16 +37,18 @@ async function early({trigger, workflow}) {
         }
         let height = await dialogUtils.buttonDialog(workflow.item.name, 'CHRISPREMADES.Macros.WallOfFire.Height', distance20Buttons, {displayAsRows: true});
         if (!height) return;
+        let templatePosition = templateUtils.getTemplatePosition(template);
+        let radiusPixels = templateUtils.getTemplateRadius(template);
         let regionData = {
             name: workflow.item.name,
             color: game.user.color,
             shapes: [
                 {
                     type: 'ellipse',
-                    x: template.x,
-                    y: template.y,
-                    radiusX: (template.object.shape.radius / radius) * (radius - 0.5),
-                    radiusY: (template.object.shape.radius / radius) * (radius - 0.5),
+                    x: templatePosition.x,
+                    y: templatePosition.y,
+                    radiusX: (radiusPixels / radius) * (radius - 0.5),
+                    radiusY: (radiusPixels / radius) * (radius - 0.5),
                     rotation: 0,
                     hole: false
                 }
@@ -78,10 +80,10 @@ async function early({trigger, workflow}) {
             shapes: [
                 {
                     type: 'ellipse',
-                    x: template.x,
-                    y: template.y,
-                    radiusX: (template.object.shape.radius / radius) * (radius + 2.5),
-                    radiusY: (template.object.shape.radius / radius) * (radius + 2.5),
+                    x: templatePosition.x,
+                    y: templatePosition.y,
+                    radiusX: (radiusPixels / radius) * (radius + 2.5),
+                    radiusY: (radiusPixels / radius) * (radius + 2.5),
                     rotation: 0,
                     hole: false
                 }
@@ -115,10 +117,10 @@ async function early({trigger, workflow}) {
         if (radius != 2.5) {
             visionRegionData.shapes.push({
                 type: 'ellipse',
-                x: template.x,
-                y: template.y,
-                radiusX: (template.object.shape.radius / radius) * (radius - 2.5),
-                radiusY: (template.object.shape.radius / radius) * (radius - 2.5),
+                x: templatePosition.x,
+                y: templatePosition.y,
+                radiusX: (radiusPixels / radius) * (radius - 2.5),
+                radiusY: (radiusPixels / radius) * (radius - 2.5),
                 rotation: 0,
                 hole: true
             });
@@ -128,17 +130,17 @@ async function early({trigger, workflow}) {
         if (facing === 'outward') {
             regionData.shapes.unshift({
                 type: 'ellipse',
-                x: template.x,
-                y: template.y,
-                radiusX: (template.object.shape.radius / radius) * (radius + 10.5),
-                radiusY: (template.object.shape.radius / radius) * (radius + 10.5),
+                x: templatePosition.x,
+                y: templatePosition.y,
+                radiusX: (radiusPixels / radius) * (radius + 10.5),
+                radiusY: (radiusPixels / radius) * (radius + 10.5),
                 hole: false
             });
             regionData.shapes[1].hole = true;
             
         } else {
-            regionData.shapes[0].radiusX = (template.object.shape.radius / radius) * (radius + 0.5);
-            regionData.shapes[0].radiusY = (template.object.shape.radius / radius) * (radius + 0.5);
+            regionData.shapes[0].radiusX = (radiusPixels / radius) * (radius + 0.5);
+            regionData.shapes[0].radiusY = (radiusPixels / radius) * (radius + 0.5);
         }
         let [visibilityRegion] = await regionUtils.createRegions([visionRegionData], workflow.token.scene, {parentEntity: concentration});
         await genericUtils.sleep(50);
@@ -148,19 +150,19 @@ async function early({trigger, workflow}) {
             shapes: [
                 {
                     type: 'ellipse',
-                    x: template.x,
-                    y: template.y,
-                    radiusX: (template.object.shape.radius / radius) * (radius + 0.5),
-                    radiusY: (template.object.shape.radius / radius) * (radius + 0.5),
+                    x: templatePosition.x,
+                    y: templatePosition.y,
+                    radiusX: (radiusPixels / radius) * (radius + 0.5),
+                    radiusY: (radiusPixels / radius) * (radius + 0.5),
                     rotation: 0,
                     hole: false
                 },
                 {
                     type: 'ellipse',
-                    x: template.x,
-                    y: template.y,
-                    radiusX: (template.object.shape.radius / radius) * (radius - 0.5),
-                    radiusY: (template.object.shape.radius / radius) * (radius - 0.5),
+                    x: templatePosition.x,
+                    y: templatePosition.y,
+                    radiusX: (radiusPixels / radius) * (radius - 0.5),
+                    radiusY: (radiusPixels / radius) * (radius - 0.5),
                     rotation: 0,
                     hole: true
                 }
@@ -215,7 +217,8 @@ async function early({trigger, workflow}) {
             await genericUtils.remove(template);
             return;
         }
-        let angle = Math.toDegrees(template.object.ray.angle);
+        let templateRay = templateUtils.getTemplateRay(template);
+        let angle = Math.toDegrees(templateRay.angle);
         if (angle < 0) angle = 360 + angle;
         let direction;
         if ((angle >= 135 && angle <= 225) || (angle >= 315 && angle < 360) || (angle >= 0 && angle <= 45)) {
@@ -227,7 +230,7 @@ async function early({trigger, workflow}) {
             await genericUtils.remove(template);
             return;
         }
-        let smallDistance = (template.object.ray.distance / length) * 5;
+        let smallDistance = (templateRay.distance / length) * 5;
         let shortAngle;
         if (angle >= 135 && angle <= 225) {
             if (direction === 'up') {
@@ -254,18 +257,13 @@ async function early({trigger, workflow}) {
                 shortAngle = -90;
             }
         }
-        let shortRay = template.object.ray.shiftAngle(Math.toRadians(shortAngle), smallDistance);
-        await genericUtils.update(template, {
-            x: shortRay.B.x,
-            y: shortRay.B.y,
-            width: 2.5 // 5.5 if using template to get tokens, this seems wrong
-        });
-        await genericUtils.sleep(50);
+        let shortRay = templateRay.shiftAngle(Math.toRadians(shortAngle), smallDistance);
+        let wallRay = foundry.canvas.geometry.Ray.fromAngle(shortRay.B.x, shortRay.B.y, templateRay.angle, templateRay.distance);
         let visionRegionData = {
             name: workflow.item.name + ' ' + genericUtils.translate('CHRISPREMADES.Macros.WallOfFire.Flames'),
             color: game.user.color,
             shapes: [
-                regionUtils.templateToRegionShape(template)
+                regionUtils.rayToRegionShape(wallRay, 2.5)
             ],
             elevation: {
                 bottom: workflow.token.document.elevation,
@@ -297,13 +295,9 @@ async function early({trigger, workflow}) {
         let [visibilityRegion] = await regionUtils.createRegions([visionRegionData], workflow.token.scene, {parentEntity: concentration});
         await genericUtils.sleep(50);
         let targets = regionUtils.tokensInRegion(visibilityRegion);
-        await genericUtils.update(template, {
-            width: 1
-        });
-        await genericUtils.sleep(50);
         await genericUtils.update(visibilityRegion, {
             shapes: [
-                regionUtils.templateToRegionShape(template)
+                regionUtils.rayToRegionShape(wallRay, 1)
             ]
         });
         if (playAnimation) {
@@ -311,8 +305,8 @@ async function early({trigger, workflow}) {
             new Sequence()
                 .effect()
                     .file('jb2a.wall_of_fire.300x100.' + color)
-                    .atLocation({x: template.object.ray.A.x, y: template.object.ray.A.y})
-                    .stretchTo({x: template.object.ray.B.x, y: template.object.ray.B.y})
+                    .atLocation({x: wallRay.A.x, y: wallRay.A.y})
+                    .stretchTo({x: wallRay.B.x, y: wallRay.B.y})
                     .scale({x: 1, y: (15 / length)})
                     .persist()
                     .name('wallOfFire')
@@ -326,17 +320,12 @@ async function early({trigger, workflow}) {
                 .play();
             /* eslint-enable indent */
         }
-        await genericUtils.update(template, {
-            x: shortRay.A.x,
-            y: shortRay.A.y,
-            width: 11
-        });
-        await genericUtils.sleep(50);
+        let damageRay = foundry.canvas.geometry.Ray.fromAngle(shortRay.A.x, shortRay.A.y, templateRay.angle, templateRay.distance);
         let regionData = {
             name: workflow.item.name,
             color: game.user.color,
             shapes: [
-                regionUtils.templateToRegionShape(template)
+                regionUtils.rayToRegionShape(damageRay, 11)
             ],
             elevation: {
                 bottom: workflow.token.document.elevation,

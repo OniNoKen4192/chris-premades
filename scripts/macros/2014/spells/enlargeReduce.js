@@ -57,7 +57,7 @@ async function use({workflow}) {
             }
         };
         if (titanStone === 2) {
-            effectData.changes = effectData.changes.concat([
+            effectData.changes = effectUtils.getChanges(effectData).concat([
                 {
                     key: 'system.traits.dr.value',
                     mode: 2,
@@ -196,7 +196,7 @@ export async function start({trigger: {entity: effect}}) {
     if (!token) return;
     if (!playAnimation || animationUtils.jb2aCheck() !== 'patreon') {
         let updates = {
-            changes: effect.changes.concat(
+            changes: effectUtils.getChanges(effect).concat(
                 {
                     key: 'system.traits.size',
                     mode: 5,
@@ -257,7 +257,7 @@ export async function start({trigger: {entity: effect}}) {
             
             .thenDo(async () => {
                 let updates = {
-                    changes: effect.changes.concat(
+                    changes: effectUtils.getChanges(effect).concat(
                         {
                             key: 'system.traits.size',
                             mode: 5,
@@ -371,7 +371,7 @@ export async function start({trigger: {entity: effect}}) {
 
             .thenDo(async () => {
                 let updates = {
-                    changes: effect.changes.concat(
+                    changes: effectUtils.getChanges(effect).concat(
                         {
                             key: 'system.traits.size',
                             mode: 5,

@@ -152,7 +152,7 @@ async function create({trigger: {entity: effect, target, identifier}}) {
     };
     switch (totemType) {
         case 'bear':
-            effectData.changes.push({
+            effectUtils.getChanges(effectData).push({
                 key: 'flags.midi-qol.advantage.check.str',
                 mode: 0,
                 value: 1,
@@ -166,7 +166,7 @@ async function create({trigger: {entity: effect, target, identifier}}) {
             });
             break;
         case 'hawk':
-            effectData.changes.push({
+            effectUtils.getChanges(effectData).push({
                 key: 'flags.midi-qol.advantage.skill.prc',
                 mode: 0,
                 value: 1,

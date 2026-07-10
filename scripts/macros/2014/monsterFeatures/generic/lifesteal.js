@@ -62,7 +62,7 @@ async function use({trigger, workflow}) {
             let effect = await effectUtils.getAllEffectsByIdentifier(token.actor, 'reduceMaxHP').find(async i => (await effectUtils.getOriginItem(i))?.uuid === trigger.entity.uuid);
             let totalMax = token.actor.system.attributes.hp.max;
             if (effect) {
-                let currReduction = parseInt(effect.changes[0].value);
+                let currReduction = parseInt(effectUtils.getChanges(effect)[0].value);
                 await genericUtils.update(effect, {
                     changes: [
                         {

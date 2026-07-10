@@ -1,4 +1,4 @@
-import {animationUtils, itemUtils} from '../../../utils.js';
+import {animationUtils, itemUtils, templateUtils} from '../../../utils.js';
 
 async function early({workflow}) {
     let playAnimation = itemUtils.getConfig(workflow.item, 'playAnimation');
@@ -82,6 +82,7 @@ async function early({workflow}) {
         .zIndex(0.1)
 
         .play();
+    let templatePosition = templateUtils.getTemplatePosition(template);
     for (let e = 0; e < 44; e++) {
         let offsetX = (Math.random() * (3.5 + 3.5) - 3.5) * canvas.grid.size;
         let offsetY = (Math.random() * (3.5 + 3.5) - 3.5) * canvas.grid.size;
@@ -91,8 +92,8 @@ async function early({workflow}) {
             .effect()
             .file('jb2a.spell_projectile.ice_shard')
             .scale(1)
-            .atLocation({x:template.x + offsetX, y: template.y + offsetY}, {offset: {y: -7}, gridUnits: true})
-            .stretchTo({x:template.x + offsetX, y: template.y + offsetY},{ offset: {y:0}, gridUnits: true})
+            .atLocation({x: templatePosition.x + offsetX, y: templatePosition.y + offsetY}, {offset: {y: -7}, gridUnits: true})
+            .stretchTo({x: templatePosition.x + offsetX, y: templatePosition.y + offsetY},{ offset: {y:0}, gridUnits: true})
             .zIndex(6)
 
             .play();

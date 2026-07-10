@@ -45,7 +45,7 @@ async function beginning({trigger, workflow}) {
     let sourceEffect = workflow.activity.effects[0]?.effect;
     if (!sourceEffect) return;
     let effectData = genericUtils.duplicate(sourceEffect.toObject());
-    effectData.changes[0].value = workflow.utilityRolls[0].total;
+    effectUtils.getChanges(effectData)[0].value = workflow.utilityRolls[0].total;
     effectData.duration = itemUtils.convertDuration(workflow.activity);
     effectData.origin = sourceEffect.uuid;
     await effectUtils.createEffect(workflow.actor, effectData);
@@ -68,7 +68,7 @@ async function chaos({trigger, workflow}) {
     let sourceEffect = workflow.activity.effects[0]?.effect;
     if (!sourceEffect) return;
     let effectData = genericUtils.duplicate(sourceEffect.toObject());
-    effectData.changes[0].value = type;
+    effectUtils.getChanges(effectData)[0].value = type;
     effectData.duration = {seconds: workflow.utilityRolls[0].total * 86400};
     effectData.origin = sourceEffect.uuid;
     await effectUtils.createEffect(workflow.actor, effectData);
@@ -111,7 +111,7 @@ async function end({trigger, workflow}) {
     let effectData = genericUtils.duplicate(sourceEffect.toObject());
     effectData.duration = itemUtils.convertDuration(workflow.activity);
     effectData.origin = sourceEffect.uuid;
-    effectData.changes[0].value = delta;
+    effectUtils.getChanges(effectData)[0].value = delta;
     await effectUtils.createEffect(workflow.actor, effectData);
 }
 async function isolation({trigger, workflow}) {
@@ -194,7 +194,7 @@ async function order({trigger, workflow}) {
     let sourceEffect = workflow.activity.effects[0]?.effect;
     if (!sourceEffect) return;
     let effectData = genericUtils.duplicate(sourceEffect.toObject());
-    effectData.changes[0].value = type;
+    effectUtils.getChanges(effectData)[0].value = type;
     effectData.duration = {seconds: workflow.utilityRolls[0].total * 86400};
     effectData.origin = sourceEffect.uuid;
     await effectUtils.createEffect(workflow.actor, effectData);
@@ -239,7 +239,7 @@ async function vulture({trigger, workflow}) {
             priority: 50
         }
     ];
-    if (selection.system.equipped) effectData.changes.push({
+    if (selection.system.equipped) effectUtils.getChanges(effectData).push({
         key: 'system.equipped',
         value: 0,
         mode: 5,

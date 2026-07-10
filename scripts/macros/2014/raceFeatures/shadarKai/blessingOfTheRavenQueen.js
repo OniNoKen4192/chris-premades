@@ -31,7 +31,7 @@ async function use({workflow}) {
             }
         }
     };
-    if (playAnimation) effectData.changes.push({
+    if (playAnimation) effectUtils.getChanges(effectData).push({
         key: 'macro.tokenMagic',
         mode: 0,
         value: 'fog',

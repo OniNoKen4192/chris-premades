@@ -63,7 +63,7 @@ async function use({workflow}) {
             }
         }
     };
-    if (workflow.actor.armor?.system.type?.value !== 'heavy') effectData.changes.push(
+    if (workflow.actor.armor?.system.type?.value !== 'heavy') effectUtils.getChanges(effectData).push(
         {
             key: 'system.attributes.ac.bonus',
             mode: 2,
@@ -76,14 +76,14 @@ async function use({workflow}) {
     let attackActivityId = Object.keys(weaponData.system.activities)[0];
     if (classLevel >= 18) {
         weaponData.system.activities[attackActivityId].attack.bonus = '+3';
-        effectData.changes[2].value = 3;
-        effectData.changes[3].value = 3;
+        effectUtils.getChanges(effectData)[2].value = 3;
+        effectUtils.getChanges(effectData)[3].value = 3;
         weaponData.system.damage.base.denomination = 8;
         delete effectData.duration;
     } else if (classLevel >= 11) {
         weaponData.system.activities[attackActivityId].attack.bonus = '+2';
-        effectData.changes[2].value = 2;
-        effectData.changes[3].value = 2;
+        effectUtils.getChanges(effectData)[2].value = 2;
+        effectUtils.getChanges(effectData)[3].value = 2;
         weaponData.system.damage.base.denomination = 8;
     } else if (classLevel >= 7) {
         weaponData.system.activities[attackActivityId].attack.bonus = '+1';

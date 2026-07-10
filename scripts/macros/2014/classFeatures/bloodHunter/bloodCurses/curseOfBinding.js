@@ -67,7 +67,7 @@ async function use({workflow}) {
         effectData.duration = {
             seconds: 60
         };
-        effectData.changes.push({
+        effectUtils.getChanges(effectData).push({
             key: 'flags.midi-qol.OverTime',
             mode: 0,
             value: 'label=' + workflow.item.name + ' (' + genericUtils.translate('CHRISPREMADES.Medkit.Effect.OverTime.Labels.End') + '),turn=end,saveDC=' + dc + ',saveAbility=str,rollType=save,saveRemove=true',

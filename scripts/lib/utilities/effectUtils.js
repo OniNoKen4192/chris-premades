@@ -1,5 +1,37 @@
 import {socket, sockets} from '../sockets.js';
 import {actorUtils, genericUtils, socketUtils} from '../../utils.js';
+// V14 moved ActiveEffect#changes into the system data model (system.changes). These helpers
+// work with both effect documents and plain effect data (inline payloads or toObject() output)
+// on both V13 and V14.
+function getChanges(effectOrData) {
+    if (!effectOrData) return [];
+    if (effectOrData instanceof ActiveEffect) {
+        if (game.release.generation > 13) return foundry.utils.getProperty(effectOrData, 'system.changes') ?? [];
+        return effectOrData.changes ?? [];
+    }
+    return effectOrData.changes ?? foundry.utils.getProperty(effectOrData, 'system.changes') ?? [];
+}
+function setChanges(effectOrData, changes) {
+    if (effectOrData instanceof ActiveEffect) return effectOrData.updateSource(changesUpdateData(changes));
+    if (foundry.utils.getProperty(effectOrData, 'system.changes') !== undefined) {
+        delete effectOrData.changes;
+        foundry.utils.setProperty(effectOrData, 'system.changes', changes);
+    } else {
+        effectOrData.changes = changes;
+    }
+    return effectOrData;
+}
+function changesUpdateData(changes) {
+    return game.release.generation > 13 ? {system: {changes}} : {changes};
+}
+function normalizeChanges(effectData) {
+    // Resolve mixed legacy/system change data (e.g. toObject() output later assigned a legacy
+    // changes array); the legacy top-level key carries the newer intent and wins
+    if (effectData?.changes && foundry.utils.getProperty(effectData, 'system.changes')) {
+        delete effectData.system.changes;
+    }
+    return effectData;
+}
 function getCastData(effect) {
     return effect.flags['chris-premades']?.castData ?? effect.flags['midi-qol']?.castData;
 }
@@ -53,6 +85,7 @@ async function createEffect(entity, effectData, {concentrationItem, parentEntity
         genericUtils.setProperty(effectData, 'flags.chris-premades.image.actor.value', avatarImg);
         genericUtils.setProperty(effectData, 'flags.chris-premades.image.actor.priority', avatarImgPriority);
     }
+    normalizeChanges(effectData);
     let effects;
     if (hasPermission) {
         effects = await entity.createEmbeddedDocuments('ActiveEffect', [effectData], {keepId});
@@ -107,6 +140,7 @@ async function createEffects(entity, effectDataArray, effectOptionsArray) {
         if (concentrationEffect) genericUtils.setProperty(effectData, 'flags.chris-premades.concentrationEffectUuid', concentrationEffect.uuid);
         if (interdependent && (parentEntity || concentrationItem)) genericUtils.setProperty(effectData, 'flags.chris-premades.interdependent', true);
         if (vae) genericUtils.setProperty(effectData, 'flags.chris-premades.vae.buttons', vae);
+        normalizeChanges(effectData);
         concentrationEffects.push(concentrationEffect);
     }
     let effects;
@@ -233,6 +267,7 @@ async function createEffectFromSidebar(actor, name, options) {
     return await createEffect(actor, effectData, options);
 }
 async function syntheticActiveEffect(effectData, entity) {
+    normalizeChanges(effectData);
     return new CONFIG.ActiveEffect.documentClass(effectData, {parent: entity});
 }
 async function getOriginItem(effect) {
@@ -259,7 +294,7 @@ function getConditions(effect) {
         'macro.StatusEffect',
         'StatusEffect'
     ];
-    effect.changes.forEach(element => {
+    getChanges(effect).forEach(element => {
         if (validKeys.includes(element.key)) conditions.add(element.value.toLowerCase());
     });
     let effectConditions = effect.flags['chris-premades']?.conditions;
@@ -268,6 +303,10 @@ function getConditions(effect) {
     return conditions;
 }
 export let effectUtils = {
+    getChanges,
+    setChanges,
+    changesUpdateData,
+    normalizeChanges,
     getCastData,
     getCastLevel,
     getBaseLevel,

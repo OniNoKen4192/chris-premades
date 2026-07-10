@@ -53,7 +53,7 @@ async function attack({trigger, workflow}) {
         await genericUtils.remove(effect);
         return;
     }
-    if (Number(effect.changes[0].value) === 30) return;
+    if (Number(effectUtils.getChanges(effect)[0].value) === 30) return;
     await genericUtils.update(effect, {
         changes: [
             {

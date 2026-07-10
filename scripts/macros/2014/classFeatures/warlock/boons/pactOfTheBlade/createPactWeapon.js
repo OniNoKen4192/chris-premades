@@ -100,7 +100,7 @@ async function use({workflow}) {
                 }
             ]
         };
-        if (improvedPactWeapon) enchantData.changes.push({
+        if (improvedPactWeapon) effectUtils.getChanges(enchantData).push({
             key: 'system.magicalBonus',
             mode: 4,
             value: 1,
@@ -127,7 +127,7 @@ async function use({workflow}) {
                     changed = true;
                 }
             }
-            if (changed) enchantData.changes.push({
+            if (changed) effectUtils.getChanges(enchantData).push({
                 key: 'activities[attack].attack.ability',
                 mode: 5,
                 value: ability,

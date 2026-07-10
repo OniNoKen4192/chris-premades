@@ -94,15 +94,16 @@ function getBonus(actor) {
 async function upgradeBonus({trigger: {entity: item}}) {
     let activeGhaalShaarat = await fromUuid(item.parent.flags['chris-premades']?.activeGhaalShaarat);
     if (!activeGhaalShaarat) return;
-    let bonus = activeGhaalShaarat.changes.find(c => c.key === 'system.magicalBonus');
+    let newChanges = genericUtils.duplicate(effectUtils.getChanges(activeGhaalShaarat));
+    let bonus = newChanges.find(c => c.key === 'system.magicalBonus');
     if (bonus) bonus.value = getBonus(item.parent);
-    else activeGhaalShaarat.changes.push({
+    else newChanges.push({
         key: 'system.magicalBonus',
         value: getBonus(item.parent),
         mode: 4,
         priority: 20
     });
-    return await genericUtils.update(activeGhaalShaarat, {changes: activeGhaalShaarat.changes});
+    return await genericUtils.update(activeGhaalShaarat, effectUtils.changesUpdateData(newChanges));
 }
 export let ghaalShaarat = {
     name: 'Ghaal\'Shaarat',

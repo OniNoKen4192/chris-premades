@@ -36,9 +36,9 @@ async function instantHealth({trigger, workflow}) {
             let found = false;
             abilities.forEach(ability => {
                 if (found) return;
-                if (effect.changes.find(i => i.key === 'system.abilities.' + ability + '.value' && i.value < 0)) found = true;
+                if (effectUtils.getChanges(effect).find(i => i.key === 'system.abilities.' + ability + '.value' && i.value < 0)) found = true;
             });
-            if (effect.changes.find(i => i.key === 'system.attributes.hp.tempmax' && i.value < 0)) found = true;
+            if (effectUtils.getChanges(effect).find(i => i.key === 'system.attributes.hp.tempmax' && i.value < 0)) found = true;
             if (found) await genericUtils.remove(effect);
         }));
         await genericUtils.update(token.actor, {'system.attributes.hp.value': token.actor.system.attributes.hp.max});
@@ -53,7 +53,7 @@ async function resistance({trigger, workflow}) {
     if (!resistanceEffect) return;
     let effectData = genericUtils.duplicate(resistanceEffect.toObject());
     effectData.origin = workflow.item.uuid;
-    effectData.changes[0].value = selection;
+    effectUtils.getChanges(effectData)[0].value = selection;
     await Promise.all(workflow.targets.map(async token => await effectUtils.createEffect(token.actor, effectData)));
 }
 async function spellImmunity({trigger, workflow}) {

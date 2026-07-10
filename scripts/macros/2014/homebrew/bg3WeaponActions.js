@@ -130,7 +130,7 @@ async function concussiveSmashUsed({trigger, workflow}) {
             dex = token.actor.system.abilities.dex.mod;
         }
         if (dex > 0) {
-            effectData.changes.push({
+            effectUtils.getChanges(effectData).push({
                 key: 'system.attributes.ac.bonus',
                 mode: 2,
                 value: -dex,
@@ -477,7 +477,7 @@ async function pommelStrikeUse({trigger, workflow}) {
             dex = token.actor.system.abilities.dex.mod;
         }
         if (dex > 0) {
-            effectData.changes.push({
+            effectUtils.getChanges(effectData).push({
                 key: 'system.attributes.ac.bonus',
                 mode: 2,
                 value: -dex,

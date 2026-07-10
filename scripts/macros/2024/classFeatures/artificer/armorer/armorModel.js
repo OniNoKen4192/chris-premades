@@ -109,7 +109,7 @@ async function giantStature({trigger, workflow}) {
         ]
     };
     if (perfectedArmor) {
-        effectData.changes.push(...[
+        effectUtils.getChanges(effectData).push(...[
             {
                 key: 'flags.midi-qol.advantage.check.str',
                 mode: 0,
@@ -153,7 +153,7 @@ async function giantStature({trigger, workflow}) {
                 });
                 genericUtils.setProperty(effectData, 'flags.chris-premades.effect.sizeAnimation', false);
             } else {
-                effectData.changes.push({
+                effectUtils.getChanges(effectData).push({
                     key: 'system.traits.size',
                     mode: 5,
                     value: newSize,

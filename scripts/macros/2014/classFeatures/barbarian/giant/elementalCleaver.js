@@ -77,7 +77,7 @@ async function infuseWeapon(workflow, selectedWeapon) {
         ]
     };
     if (versatile?.length) {
-        enchantData.changes.push({
+        effectUtils.getChanges(enchantData).push({
             key: 'system.damage.versatile.custom.enabled',
             mode: 5,
             value: '"true"',

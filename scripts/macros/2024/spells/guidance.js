@@ -11,11 +11,11 @@ async function use({trigger, workflow}) {
     let sourceEffect = workflow.item.effects.contents?.[0];
     if (!sourceEffect) return;
     let effectData = genericUtils.duplicate(sourceEffect.toObject());
-    effectData.changes[0].key = effectData.changes[0].key.replaceAll('acr', selection.id);
+    effectUtils.getChanges(effectData)[0].key = effectUtils.getChanges(effectData)[0].key.replaceAll('acr', selection.id);
     effectData.origin = sourceEffect.uuid,
     effectData.duration = itemUtils.convertDuration(workflow.activity);
     let formula = itemUtils.getConfig(workflow.item, 'formula');
-    effectData.changes[0].value = '+ ' + formula;
+    effectUtils.getChanges(effectData)[0].value = '+ ' + formula;
     effectData.img = options.find(i => i.id === selection.id)?.img ?? sourceEffect.img;
     await Promise.all(workflow.targets.map(async token => {
         await effectUtils.createEffect(token.actor, effectData, {concentrationItem: workflow.item});

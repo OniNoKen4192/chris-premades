@@ -333,7 +333,7 @@ async function turnStart({trigger: {entity: effect, token, target}}) {
         (
             i.statuses.has('frightened') || // Status Effect dropdown on details page
             i.flags['chris-premades']?.conditions?.includes('frightened') || // CPR effect medkit
-            i.changes.find(j => validKeys.includes(j.key) && j.value.toLowerCase() === 'frightened') // dae/midi key
+            effectUtils.getChanges(i).find(j => validKeys.includes(j.key) && j.value.toLowerCase() === 'frightened') // dae/midi key
         )
         && await effectUtils.getOriginItem(i)?.actor === token.actor
     );

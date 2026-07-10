@@ -13,7 +13,7 @@ async function use({trigger, workflow}) {
     effectData.name = workflow.item.name;
     effects.forEach(effect => {
         let sourceEffectData = genericUtils.duplicate(effect.toObject());
-        effectData.changes.push(...sourceEffectData.changes);
+        effectUtils.getChanges(effectData).push(...effectUtils.getChanges(sourceEffectData));
     });
     await effectUtils.createEffect(workflow.actor, effectData, {
         avatarImg: itemUtils.getConfig(workflow.item, 'avatarImg'),

@@ -130,11 +130,18 @@ export function registerHooks() {
     Hooks.on('preDeleteItem', equipment.remove);
     Hooks.on('preCreateItem', equipment.addOrUpdate);
     Hooks.on('dnd5e.restCompleted', rest);
-    Hooks.on('preCreateMeasuredTemplate', template.preCreateMeasuredTemplate);
-    //Hooks.on('preCreateRegion', region.preCreateRegion);
+    // V14: templates are Region-backed; the MeasuredTemplate document hooks no longer fire
+    if (game.release.generation > 13) {
+        Hooks.on('preCreateRegion', template.preCreateRegionTemplate);
 
-    // Template Attachments
-    Hooks.on('preUpdateMeasuredTemplate', template.preUpdateMeasuredTemplate);
+        // Template Attachments
+        Hooks.on('preUpdateRegion', template.preUpdateRegionTemplate);
+    } else {
+        Hooks.on('preCreateMeasuredTemplate', template.preCreateMeasuredTemplate);
+
+        // Template Attachments
+        Hooks.on('preUpdateMeasuredTemplate', template.preUpdateMeasuredTemplate);
+    }
 
     //Circle Casting
     Hooks.on('preDeleteActiveEffect', concentration.preRemove);
@@ -156,9 +163,15 @@ export function registerHooks() {
         Hooks.on('moveToken', movementEvents.moveToken);
         Hooks.on('createActiveEffect', conditions.createActiveEffect);
         Hooks.on('deleteActiveEffect', conditions.deleteActiveEffect);
-        Hooks.on('updateMeasuredTemplate', templateEvents.updateMeasuredTemplate);
-        Hooks.on('deleteMeasuredTemplate', templateEvents.deleteMeasuredTemplate);
-        Hooks.on('createMeasuredTemplate', templateEvents.createMeasuredTemplate);
+        if (game.release.generation > 13) {
+            Hooks.on('updateRegion', templateEvents.updateRegionTemplate);
+            Hooks.on('deleteRegion', templateEvents.deleteRegionTemplate);
+            Hooks.on('createRegion', templateEvents.createRegionTemplate);
+        } else {
+            Hooks.on('updateMeasuredTemplate', templateEvents.updateMeasuredTemplate);
+            Hooks.on('deleteMeasuredTemplate', templateEvents.deleteMeasuredTemplate);
+            Hooks.on('createMeasuredTemplate', templateEvents.createMeasuredTemplate);
+        }
         Hooks.on('createToken', auras.createToken);
         Hooks.on('deleteToken', auras.deleteToken);
         Hooks.on('canvasReady', auras.canvasReady);

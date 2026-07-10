@@ -1,4 +1,4 @@
-import {dialogUtils, genericUtils, itemUtils} from '../../../../../utils.js';
+import {dialogUtils, genericUtils, itemUtils, effectUtils} from '../../../../../utils.js';
 async function use({workflow}) {
     let weapons = workflow.actor.items.filter(i => i.type === 'weapon' && !i.system.properties.has('two'));
     let existingHexWeaponEffect = weapons.map(i => Array.from(i.allApplicableEffects()).find(j => genericUtils.getIdentifier(j) === 'hexWarriorWeapon')).filter(i => i);
@@ -47,7 +47,7 @@ async function use({workflow}) {
             changed = true;
         }
     }
-    if (changed) enchantData.changes.push({
+    if (changed) effectUtils.getChanges(enchantData).push({
         key: 'activities[attack].attack.ability',
         mode: 5,
         value: ability,

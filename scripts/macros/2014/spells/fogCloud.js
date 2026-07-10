@@ -67,7 +67,8 @@ async function early({workflow}) {
         }
     }
     if (useRealDarkness) {
-        let [darknessSource] = await genericUtils.createEmbeddedDocuments(template.parent, 'AmbientLight', [{config: {negative: true, dim: template.distance, animation: {type: darknessAnimation}}, x: template.x, y: template.y}]);
+        let templatePosition = templateUtils.getTemplatePosition(template);
+        let [darknessSource] = await genericUtils.createEmbeddedDocuments(template.parent, 'AmbientLight', [{config: {negative: true, dim: templateUtils.getTemplateDistance(template), animation: {type: darknessAnimation}}, x: templatePosition.x, y: templatePosition.y}]);
         effectUtils.addDependent(template, [darknessSource]);
     }
     let effectData = {

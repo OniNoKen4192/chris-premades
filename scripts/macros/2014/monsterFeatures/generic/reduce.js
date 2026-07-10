@@ -35,7 +35,7 @@ async function use({workflow}) {
     if (config.oneDamage) {
         effectUtils.addMacro(effectData, 'midi.actor', ['reduceReduced']);
     } else {
-        effectData.changes.push(
+        effectUtils.getChanges(effectData).push(
             {
                 key: 'system.bonuses.mwak.damage',
                 mode: 2,
@@ -51,7 +51,7 @@ async function use({workflow}) {
         );
     }
     if (config.attackDisadvantage) {
-        effectData.changes.push({
+        effectUtils.getChanges(effectData).push({
             key: 'flags.midi-qol.disadvantage.attack.str',
             mode: 5,
             value: 1,
@@ -59,7 +59,7 @@ async function use({workflow}) {
         });
     }
     if (config.stealthACBonus) {
-        effectData.changes.push(
+        effectUtils.getChanges(effectData).push(
             {
                 key: 'system.skills.ste.bonuses.check',
                 mode: 2,

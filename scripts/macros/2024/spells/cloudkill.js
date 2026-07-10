@@ -62,7 +62,7 @@ async function move({trigger: {entity: effect, token}}) {
     function getAllowedMoveLocation(casterToken, template, maxSquares) {
         for (let i = maxSquares; i > 0; i--) {
             let movePixels = i * canvas.grid.size;
-            let ray = new foundry.canvas.geometry.Ray(casterToken.center, template.object.center);
+            let ray = new foundry.canvas.geometry.Ray(casterToken.center, templateUtils.getTemplatePosition(template));
             let newCenter = ray.project((ray.distance + movePixels)/ray.distance);
             let isAllowedLocation = canvas.visibility.testVisibility(newCenter, {object: template.object});
             if (isAllowedLocation) return newCenter;
@@ -76,7 +76,7 @@ async function move({trigger: {entity: effect, token}}) {
         genericUtils.notify('CHRISPREMADES.Macros.Cloudkill.NoRoom', 'info');
     } else {
         newCenter = canvas.grid.getSnappedPoint(newCenter, {mode: CONST.GRID_SNAPPING_MODES.TOP_LEFT_CORNER});
-        await genericUtils.update(template, {x: newCenter.x, y: newCenter.y});
+        await templateUtils.moveTemplate(template, {x: newCenter.x, y: newCenter.y});
     }
     let targets = Array.from(templateUtils.getTokensInTemplate(template)) ?? [];
     if (combatUtils.inCombat()) {
