@@ -31,7 +31,9 @@ if ($Packs) {
 }
 
 $manifest = Get-Content -Raw -LiteralPath $moduleDevPath
-$manifest = $manifest.Replace('#{VERSION}#', '0.0.0-dev').Replace('#{MANIFEST}#', '').Replace('#{DOWNLOAD}#', '')
+# Dev version must satisfy dependency floors (Midi-QOL requires chris-premades >= 1.3.0,
+# and rejects the module outright below it) — track the upstream baseline, -dev suffixed.
+$manifest = $manifest.Replace('#{VERSION}#', '1.5.43-dev').Replace('#{MANIFEST}#', '').Replace('#{DOWNLOAD}#', '')
 $utf8NoBom = [System.Text.UTF8Encoding]::new($false)
 [System.IO.File]::WriteAllText($moduleJsonPath, $manifest, $utf8NoBom)
 Write-Host "module.json generated at $moduleJsonPath"

@@ -35,7 +35,7 @@ try {
     Write-Criterion 1 (($failedExitCode -ne 0) -and $failedText.Contains($expectedModulesPath)) "missing modules path failure contains $expectedModulesPath"
 
     $moduleContent = Get-Content -Raw -LiteralPath $moduleJson
-    Write-Criterion 2 ((Test-Path -LiteralPath $moduleJson) -and $moduleContent.Contains('"version": "0.0.0-dev"') -and -not $moduleContent.Contains('#{')) 'module.json generated with dev substitutions and no placeholder remnants'
+    Write-Criterion 2 ((Test-Path -LiteralPath $moduleJson) -and $moduleContent.Contains('"version": "1.5.43-dev"') -and -not $moduleContent.Contains('#{')) 'module.json generated with dev substitutions and no placeholder remnants'
 
     $dataRoot = Join-Path $scratch 'FoundryData'
     $modulesRoot = Join-Path $dataRoot 'modules'
