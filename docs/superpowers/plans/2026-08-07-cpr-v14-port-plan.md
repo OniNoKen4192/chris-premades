@@ -10,6 +10,29 @@
 
 **Spec:** `docs/superpowers/specs/2026-08-07-cpr-v14-port-design.md`
 
+## Task/Lane Map
+
+Lanes-aware revision (2026-08-07, after `/lanes-init`). Lanes per `ROUTING.md`: the audit tasks are frontier-judgment work; Tasks 6, 7, 8A, and 12 touch `security_routed` paths (`module-template.json`, `module-dev.json`, `.github/workflows/**`) → KEEP by hard rule (a); Task 6 is additionally cross-cutting (>100 files) → rule (b); Tasks 9, 10, 13 are human-in-the-loop. Task 8B is the one contract-ready DELEGATE unit.
+
+| Task | Lane | Tier | Depends on |
+|---|---|---|---|
+| 1 — Repo bootstrap | KEEP | — | — (**DONE 2026-08-07**) |
+| 2 — Baseline build | KEEP | — | 1 (**DONE 2026-08-07**) |
+| 3 — Audit artifacts + skeleton | KEEP | — | 1 |
+| 4 — Audit: infrastructure | KEEP | — | 3 |
+| 5 — Audit: macros + metadata | KEEP | — | 4 |
+| 6 — Apply the port | KEEP | — | 5 |
+| 7 — Fork identity | KEEP | — | 6 |
+| 8A — Release workflow edit | KEEP | — | 7 |
+| 8B — dev-link.ps1 | DELEGATE | terra | 2 |
+| 9 — Test instance + smoke test | KEEP (human) | — | 6, 8B |
+| 10 — Category sweep + fix loop | KEEP (human) | — | 9 |
+| 11 — First release | KEEP | — | 8A, 10 |
+| 12 — Upstream tracking | KEEP | — | 11 |
+| 13 — Live server upgrade | KEEP (human) | — | 10, 11 |
+
+Routing note for Task 10: individual macro fixes discovered during the sweep MAY be spun out as ad-hoc DELEGATE specs when the symptom is reproducible and the fix is single-file with a statable acceptance — doubt routes KEEP, per ROUTING.md.
+
 ## Global Constraints
 
 - Repo home: `F:\OnisCauldronOfHubris` (NTFS; never N:, which is exFAT-over-USB).
@@ -55,14 +78,16 @@
 | `scripts/**`, `module-template.json`, `module-dev.json` | 6 | Audited port commits applied |
 | `module-template.json`, `module-dev.json`, `README.md` | 7 | Fork identity (URLs, banner) |
 | `.github/workflows/main.yml` | 8 | Release build without registry publish |
-| `tools/dev-link.ps1` | 8 | Junction-based local dev deploy into the v14 test instance |
+| `tools/dev-link.ps1` | 8B | Junction-based local dev deploy into the v14 test instance |
 | `.github/workflows/upstream-watch.yml` | 12 | Weekly upstream-release watcher → GitHub issue |
 | `docs/superpowers/UPSTREAM_BASELINE` | 12 | Upstream tag the fork currently incorporates |
 | `docs/superpowers/MAINTENANCE.md` | 12 | Merge/re-test/release + retirement procedures |
 
 ---
 
-### Task 1: Fork, clone into place, branch layout, land the docs
+### Task 1: Fork, clone into place, branch layout, land the docs (LANE: KEEP) — ✅ DONE 2026-08-07
+
+> Executed: fork `OniNoKen4192/chris-premades`; repo initialized in place; remotes `origin`/`upstream`/`timport` wired; `v14` at tag `1.5.43` (commit `31c7b73c8`), mirror branch `main` tracking `upstream/main`; docs committed (`50e45c2ac`) and both branches pushed.
 
 **Files:**
 - Create: git repo in `F:\OnisCauldronOfHubris` (init + remotes; dir already has the two loose `.md` docs)
@@ -128,7 +153,9 @@ Expected: both branches visible on `https://github.com/$me/chris-premades`.
 
 ---
 
-### Task 2: Baseline build verification (clean 1.5.43, pre-port)
+### Task 2: Baseline build verification (clean 1.5.43, pre-port) (LANE: KEEP) — ✅ DONE 2026-08-07
+
+> Executed: Node v22.14.0; `npm ci` clean; `buildCompendiums` produced 37 packs; webpack compiled successfully (4 size warnings only); `git status` empty (outputs ignored, incl. root `module.json` already in upstream `.gitignore`).
 
 **Files:**
 - No repo changes. Generates `node_modules/`, `packs/`, `dist/` (all gitignored).
@@ -167,7 +194,7 @@ Expected: empty output (nothing untracked/modified). If `dist/`, `packs/`, or `m
 
 ---
 
-### Task 3: Generate audit artifacts and the audit doc skeleton
+### Task 3: Generate audit artifacts and the audit doc skeleton (LANE: KEEP)
 
 **Files:**
 - Create: `docs/superpowers/audits/2026-08-07-timroesler-port-audit.md`
@@ -245,7 +272,7 @@ git commit -m "docs: audit skeleton for TimRoesler v14 port review"
 
 ---
 
-### Task 4: Audit the infrastructure changes
+### Task 4: Audit the infrastructure changes (LANE: KEEP)
 
 **Files:**
 - Modify: `docs/superpowers/audits/2026-08-07-timroesler-port-audit.md` (fill "Infrastructure changes" table)
@@ -273,7 +300,7 @@ Expected: every infrastructure file listed in Key Reference Facts has a row; zer
 
 ---
 
-### Task 5: Audit the macro and metadata changes
+### Task 5: Audit the macro and metadata changes (LANE: KEEP)
 
 **Files:**
 - Modify: `docs/superpowers/audits/2026-08-07-timroesler-port-audit.md` (fill "Macro changes" and "Metadata changes" tables; set "Commit dispositions")
@@ -299,7 +326,7 @@ git commit -m "docs: complete port audit - macro patterns, metadata, conflict re
 
 ---
 
-### Task 6: Apply the audited port onto v14
+### Task 6: Apply the audited port onto v14 (LANE: KEEP — security_routed manifests + cross-cutting)
 
 **Files:**
 - Modify: `scripts/**` (~115 files), `module-template.json`, `module-dev.json` — via cherry-pick + audit-driven rewrites
@@ -358,14 +385,14 @@ git push origin v14
 
 ---
 
-### Task 7: Fork identity — manifests and README
+### Task 7: Fork identity — manifests and README (LANE: KEEP — security_routed manifests)
 
 **Files:**
 - Modify: `module-template.json`, `module-dev.json`, `README.md`
 
 **Interfaces:**
 - Consumes: `$me` (Ken's GitHub login, from `gh api user -q .login`); post-cherry-pick manifests (which now carry Tim's compat/times-up changes but still upstream's URLs, since `42dfa622` was skipped).
-- Produces: manifests pointing at Ken's fork. Task 8's workflow and Task 11's release depend on these exact URLs.
+- Produces: manifests pointing at Ken's fork. Task 8A's workflow and Task 11's release depend on these exact URLs.
 
 - [ ] **Step 1: Point both manifest templates at the fork**
 
@@ -420,92 +447,93 @@ git push origin v14
 
 ---
 
-### Task 8: Release workflow and local dev-deploy script
+### Task 8A: Release workflow edit (LANE: KEEP — security_routed workflows)
 
 **Files:**
 - Modify: `.github/workflows/main.yml`
-- Create: `tools/dev-link.ps1`
 
 **Interfaces:**
 - Consumes: manifests from Task 7.
-- Produces: a release workflow Task 11 triggers; `tools/dev-link.ps1 [-FoundryData <path>] [-Packs]` which Task 9 uses to load the module into the test instance.
+- Produces: the release workflow Task 11 triggers.
 
 - [ ] **Step 1: Remove the registry-publish step from `main.yml`.** Delete the entire `FoundryVTT AutoPublish` step (the final step: `uses: fjogeleit/http-request-action@v2` posting to `https://foundryvtt.com/_api/packages/release_version/`) and the now-unused `FOUNDRY_MANIFEST=` line in the `get_version` step. Leave everything else byte-identical — in particular the zip line `zip -r ./module.zip module.json dist packs styles templates LICENSE lang images CHANGELOG.md` and the `restackio/update-json-file-action@2.1` substitution of `version` + `download`.
 
 Verification: `git diff .github/workflows/main.yml` shows only deletions (plus the removed `FOUNDRY_MANIFEST` line), and `npx --yes js-yaml .github/workflows/main.yml` exits 0 (it parses the YAML and prints it as JSON — a parse error means the edit broke the file).
 
-- [ ] **Step 2: Write `tools/dev-link.ps1`** with exactly this content:
-
-```powershell
-<#
-Links this repo into a Foundry VTT data folder as the chris-premades module
-(junction, zero-copy) and generates module.json from module-dev.json so
-Foundry loads unbundled sources (scripts/module.js) - no webpack per iteration.
-
-Dev loop: edit code -> refresh Foundry (F5). After changing packData/, rerun
-with -Packs (Foundry must be STOPPED: LevelDB packs are locked while it runs).
-#>
-param(
-    [string]$FoundryData = 'F:\FoundryV14Data\Data',
-    [switch]$Packs
-)
-$ErrorActionPreference = 'Stop'
-$repo = Split-Path $PSScriptRoot -Parent
-
-if ($Packs) {
-    Push-Location $repo
-    try { npm run buildCompendiums } finally { Pop-Location }
-}
-
-$dev = Get-Content (Join-Path $repo 'module-dev.json') -Raw
-$dev = $dev.Replace('#{VERSION}#', '0.0.0-dev').Replace('#{MANIFEST}#', '').Replace('#{DOWNLOAD}#', '')
-Set-Content (Join-Path $repo 'module.json') $dev -NoNewline
-
-$modules = Join-Path $FoundryData 'modules'
-if (-not (Test-Path $modules)) { throw "No modules folder at $modules - wrong -FoundryData?" }
-$link = Join-Path $modules 'chris-premades'
-if (-not (Test-Path $link)) {
-    New-Item -ItemType Junction -Path $link -Target $repo | Out-Null
-    Write-Host "Created junction $link -> $repo"
-} else {
-    Write-Host "Junction already present: $link"
-}
-Write-Host "module.json generated (version 0.0.0-dev). Restart/refresh Foundry to pick up changes."
-```
-
-- [ ] **Step 3: Confirm root `module.json` is gitignored** (the script generates it):
-
-```powershell
-git check-ignore module.json
-```
-
-Expected: prints `module.json`. If it prints nothing, add `/module.json` to `.gitignore` and include it in this task's commit.
-
-- [ ] **Step 4: Script sanity run** (no Foundry needed — expect the controlled failure):
-
-```powershell
-powershell -File tools\dev-link.ps1 -FoundryData 'F:\definitely-not-real'
-```
-
-Expected: throws `No modules folder at F:\definitely-not-real\modules - wrong -FoundryData?` and nonzero exit. Also verify it did generate `module.json` at repo root with `"version": "0.0.0-dev"` (generation happens before the path check — that's fine).
-
-- [ ] **Step 5: Commit and push**
+- [ ] **Step 2: Commit and push**
 
 ```bash
-git add .github/workflows/main.yml tools/dev-link.ps1 .gitignore
-git commit -m "chore(v14): fork release workflow (no registry publish) + dev-link script"
+git add .github/workflows/main.yml
+git commit -m "chore(v14): fork release workflow - no registry publish"
 git push origin v14
 ```
 
 ---
 
-### Task 9: **[HUMAN-IN-LOOP]** Local Foundry v14 test instance + smoke test
+### Task 8B: `tools/dev-link.ps1` — local dev deploy (LANE: DELEGATE, tier terra)
+
+**Files:**
+- Create: `tools/dev-link.ps1`
+
+**Interfaces:**
+- Consumes: `module-dev.json` at repo root — real file, containing the literal placeholder tokens `#{VERSION}#`, `#{MANIFEST}#`, and `#{DOWNLOAD}#`; npm script `buildCompendiums` (defined in `package.json` as `node packData/packData.mjs`).
+- Produces (the contract Task 9 invokes):
+
+```powershell
+# invocation:
+powershell -File tools\dev-link.ps1 [-FoundryData <path>] [-Packs]
+# parameter block (exact):
+param(
+    [string]$FoundryData = 'F:\FoundryV14Data\Data',
+    [switch]$Packs
+)
+```
+
+**Purpose (for the implementer):** link this repo into a Foundry VTT data folder as the `chris-premades` module using an NTFS junction (zero-copy dev loop: edit file → refresh Foundry), generating a root `module.json` from `module-dev.json` so Foundry loads the unbundled sources (`scripts/module.js`) — no webpack run per iteration.
+
+**Behavioral criteria:**
+1. Fail-fast script (`$ErrorActionPreference = 'Stop'`); repo root resolved as the parent directory of the script's own directory (the script lives in `tools/`), never from the current working directory.
+2. When `-Packs` is passed, run `npm run buildCompendiums` from the repo root before anything else (restore the caller's location afterward, even on failure).
+3. Generate `module.json` at the repo root from `module-dev.json` by replacing `#{VERSION}#` with `0.0.0-dev` and both `#{MANIFEST}#` and `#{DOWNLOAD}#` with the empty string. No other content changes; do not append a trailing newline; never modify `module-dev.json` itself.
+4. If `<FoundryData>\modules` does not exist, throw an error message that names the checked path and suggests `-FoundryData` is wrong. (Generating `module.json` before this check is acceptable.)
+5. Create junction `<FoundryData>\modules\chris-premades` → repo root only if it does not already exist; a rerun with the junction present is a no-op success (idempotent). Use `New-Item -ItemType Junction`.
+6. Print what happened (junction created / already present; module.json generated) to the host.
+7. A comment header documents the dev loop and the constraint that Foundry must be stopped during `-Packs` (LevelDB packs are locked while Foundry runs).
+
+**Constraints:** PowerShell 7 (pwsh) compatible; no external dependencies beyond git/npm already in the repo; writes nothing outside the repo-root `module.json` and the junction path; `module.json` is already gitignored upstream — do not commit it.
+
+**Acceptance** (runnable without Foundry installed):
+
+```powershell
+# 1. Negative path: nonexistent data dir
+powershell -File tools\dev-link.ps1 -FoundryData 'F:\definitely-not-real'
+# expected: nonzero exit; error names F:\definitely-not-real\modules
+# expected: module.json exists at repo root and contains "version": "0.0.0-dev"
+
+# 2. Positive path + idempotence: scratch data dir
+New-Item -ItemType Directory -Force C:\Users\kencu\AppData\Local\Temp\devlink-test\modules | Out-Null
+powershell -File tools\dev-link.ps1 -FoundryData 'C:\Users\kencu\AppData\Local\Temp\devlink-test'
+# expected: exit 0; junction ...\devlink-test\modules\chris-premades resolves to the repo root
+powershell -File tools\dev-link.ps1 -FoundryData 'C:\Users\kencu\AppData\Local\Temp\devlink-test'
+# expected: exit 0 again, reports junction already present
+Remove-Item C:\Users\kencu\AppData\Local\Temp\devlink-test -Recurse -Force
+
+# 3. Hygiene
+git check-ignore module.json   # expected output: module.json
+git status --porcelain          # expected: only tools/dev-link.ps1 as the new file
+```
+
+(Commit/merge is handled by the Lanes pipeline on APPROVE: work lands on `lanes/<task-id>` in the task worktree, then merges into `v14`.)
+
+---
+
+### Task 9: **[HUMAN-IN-LOOP]** Local Foundry v14 test instance + smoke test (LANE: KEEP)
 
 **Files:**
 - No repo changes (fixes discovered here are made in Task 10's loop). Creates `F:\FoundryV14Data\` outside the repo.
 
 **Interfaces:**
-- Consumes: `tools/dev-link.ps1` (Task 8), built `packs/` (rerun `-Packs` if Task 6 is newer than the last `buildCompendiums`).
+- Consumes: `tools/dev-link.ps1` (Task 8B), built `packs/` (rerun `-Packs` if Task 6 is newer than the last `buildCompendiums`).
 - Produces: a running v14 world named `cpr-test` with the module loaded — the environment for Task 10 and Task 11's install verification.
 
 - [ ] **Step 1 [HUMAN]: Install Foundry v14** — download the v14 **Node.js** build from https://foundryvtt.com (licensed account) to e.g. `F:\FoundryV14App\`, then run it against a fresh data path so it can't touch any existing install:
@@ -538,7 +566,7 @@ Expected: all five pass → smoke test done, Phase 2 sweep may start. Any failur
 
 ---
 
-### Task 10: **[HUMAN-IN-LOOP]** Category sweep and fix loop
+### Task 10: **[HUMAN-IN-LOOP]** Category sweep and fix loop (LANE: KEEP; see routing note in Task/Lane Map)
 
 **Files:**
 - Modify: `scripts/**` (fix commits as failures surface)
@@ -573,13 +601,13 @@ Each failure and its fix commit SHA goes in the "Phase 2 findings" table. Push a
 
 ---
 
-### Task 11: First release `1.5.43-v14.1` and manifest-install verification
+### Task 11: First release `1.5.43-v14.1` and manifest-install verification (LANE: KEEP)
 
 **Files:**
 - No repo file changes (release is a GitHub object; workflow attaches assets).
 
 **Interfaces:**
-- Consumes: exit bar met (Task 10); workflow (Task 8); manifests (Task 7).
+- Consumes: exit bar met (Task 10); workflow (Task 8A); manifests (Task 7).
 - Produces: installable manifest URL `https://github.com/<$me>/chris-premades/releases/latest/download/module.json` — the URL Task 13 installs on the live server.
 
 - [ ] **Step 1: Enable Actions on the fork** (forks default to disabled):
@@ -615,7 +643,7 @@ Expected: `id=chris-premades`, `version=1.5.43-v14.1`, download pointing at `rel
 
 ---
 
-### Task 12: Upstream tracking — watcher workflow, baseline marker, maintenance doc
+### Task 12: Upstream tracking — watcher workflow, baseline marker, maintenance doc (LANE: KEEP — security_routed workflows)
 
 **Files:**
 - Create: `.github/workflows/upstream-watch.yml`, `docs/superpowers/UPSTREAM_BASELINE`, `docs/superpowers/MAINTENANCE.md`
@@ -716,7 +744,7 @@ Expected: manual `workflow_dispatch` run succeeds; since upstream latest (`1.5.4
 
 ---
 
-### Task 13: **[HUMAN-IN-LOOP]** Live server upgrade
+### Task 13: **[HUMAN-IN-LOOP]** Live server upgrade (LANE: KEEP)
 
 **Files:**
 - None in this repo. Live-server operation, gated on Task 10's exit bar + Task 11's verified release.
@@ -732,6 +760,7 @@ Expected: manual `workflow_dispatch` run succeeds; since upstream latest (`1.5.4
 
 ## Execution notes
 
-- Tasks 1–8 are fully agent-executable in order. Task 9 blocks on Ken (licensed Foundry download, UI). Tasks 9–10 are an interactive loop. Tasks 11–12 are agent-executable once the exit bar is declared. Task 13 is Ken's, with the plan as checklist.
+- Tasks 1–2 are DONE. Tasks 3–8A run KEEP in-session in order; Task 8B goes through the Lanes pipeline (`/lanes-emit` this plan → worktree via `lanes-validate.mjs worktree create` → `lanes-implementer` → `lanes-reviewer` → merge on APPROVE) and only depends on Task 2, so it can dispatch any time. Task 9 blocks on Ken (licensed Foundry download, UI). Tasks 9–10 are an interactive loop. Tasks 11–12 are agent-executable once the exit bar is declared. Task 13 is Ken's, with the plan as checklist.
+- `automation.level` is `manual` (no `automation` block in `.lanes/config.json`): every Lanes stage handoff is a human handoff for now.
 - Commit style follows the repo's existing informal history; prefixes used here: `docs:`, `chore(v14):`, `port(v14):`, `fix(v14):`.
 - If anything discovered mid-execution contradicts the audit or this plan (e.g. a fifth conflicting file, a v14 API the migration notes don't cover), update the audit doc in the same commit as the fix — the audit doc is the living record, the plan stays frozen.

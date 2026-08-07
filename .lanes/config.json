@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "project": {
+    "app_subdir": "",
+    "command_prefix": ""
+  },
+  "commands": {
+    "test": "npm run build",
+    "lint": "npx eslint",
+    "typecheck": "",
+    "acceptance_runner": "npm run build"
+  },
+  "backend": {
+    "name": "codex-mcp",
+    "dispatch_tool": "mcp__codex__codex",
+    "reply_tool": "mcp__codex__codex-reply",
+    "approval_mode": "pilot",
+    "tiers": [
+      "sol",
+      "terra",
+      "luna"
+    ],
+    "ratelimit_signal": [
+      "usage-cap",
+      "429",
+      "rate limit"
+    ],
+    "failover_tiers": [
+      "opus",
+      "sonnet",
+      "haiku"
+    ]
+  },
+  "routing": {
+    "security_routed": [
+      "scripts/migrations.js",
+      "module-template.json",
+      "module-dev.json",
+      ".github/workflows/**"
+    ],
+    "do_not_touch": [
+      "package-lock.json",
+      "LICENSE",
+      "packData/**",
+      "lang/**",
+      "images/**"
+    ]
+  },
+  "pipeline": {
+    "plans_dir": "docs/superpowers/plans",
+    "tasks_dir": "docs/superpowers/tasks",
+    "ledger": ".superpowers/sdd/progress.md"
+  }
+}
