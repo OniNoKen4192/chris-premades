@@ -445,9 +445,9 @@
       ]
     }
   ],
-  "changelog": "https://github.com/chrisk123999/chris-premades/blob/master/CHANGELOG.md",
-  "url": "https://github.com/chrisk123999/chris-premades/",
-  "manifest": "https://github.com/chrisk123999/chris-premades/releases/latest/download/module.json",
+  "changelog": "https://github.com/OniNoKen4192/chris-premades/blob/v14/CHANGELOG.md",
+  "url": "https://github.com/OniNoKen4192/chris-premades/",
+  "manifest": "https://github.com/OniNoKen4192/chris-premades/releases/latest/download/module.json",
   "download": "#{DOWNLOAD}#",
   "license": "LICENSE",
   "readme": "README.md",

@@ -1,3 +1,12 @@
+> ## ⚠️ Personal v14 fork — not the official module
+>
+> This is Ken's personal fork of [Cauldron of Plentiful Resources](https://github.com/chrisk123999/chris-premades),
+> ported to Foundry VTT v14 (incorporating audited changes from
+> [TimRoesler/chris-premades-v14](https://github.com/TimRoesler/chris-premades-v14)).
+> **Do not report issues here to the CPR, Midi-QOL, or DAE authors.**
+> When the official module ships v14 support, this fork will be retired.
+> Versions are numbered `<upstream-baseline>-v14.N`.
+
 # Readme
 
 A collection of automated items including spells, class features, monster features, etc., mechanics to make those possible, and quality-of-life based extensions for a high-automation Midi-QOL based D&D5e environment. Compendiums included in this module do not include item's descriptions. While this module has several module dependencies by different authors, do not pester tposney, Wasp, or any other module authors with bugs or issues related to this module. Bug reports and large module implementation requests may be made on the GitHub. Faster support and feature requests can be accessed on the [Discord server](https://discord.gg/BumxBcQDrT).
